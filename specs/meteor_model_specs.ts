@@ -66,56 +66,107 @@ describe('MeteorModel', () => {
 
   describe(".addValidationError()", () => {
     it("should add an error message to the errors object on an specific attribute name", () => {
-
+      modelInstance = new MeteorModelFixture();
+      assert.equal(modelInstance.addValidationError());
     });
   });
 
   describe(".validate()", () => {
-    it("should validate all the ValidationRules for every attribute", () => {
+    it("should validate all the ValidationRules for every attribute and build a list of errors for every invalid attribute", () => {
+      modelInstance = new MeteorModelFixture();
 
+      assert.equal(modelInstance._errors, {});
+      modelInstance.validate();
+      assert.equal(modelInstance._errors, {
+        name:  ["Invalid message"],
+        items: ["Invalid message"]
+      });
     });
   });
 
   describe(".isValid()", () => {
-    xit("should validate all ValidationRules at once", () => {
-
-    });
-
-    xit("it should collect all errors of each field organized by attribute name", () => {
-
+    it("should check if the model attributes are valid by looking into the _errors field", () => {
+      modelInstance = new MeteorModelFixture();
+      modelInstance._errors = {
+        name:  ["Invalid message 1", "Super invalid"],
+        items: ["Invalid message"]
+      };
+      assert.equal(modelInstance.isValid(), false);
+      modelInstance._errors = {};
+      assert.equal(modelInstance.isValid(), true);
     });
   });
 
   describe(".validateAttr()", () => {
-
+    it("should validate a specific attribute using its ValidationRules and update the _errors field with the invalid messages", () => {
+      modelInstance = new MeteorModelFixture();
+      modelInstance._errors = {
+        name: ["Invalid message 1", "Super invalid"],
+        // Note that errors for "items" is not there
+      };
+      modelInstance.validateAttr("items");
+      // Note that the _errors object should only be modified at the specific attribute
+      assert.equal(modelInstance._errors, {
+        name:  ["Invalid message 1", "Super invalid"],
+        items: ["Invalid message"]
+      });
+    });
   });
 
   describe(".isValidAttr()", () => {
-    xit("should validate all ValidationRules in a specific attribute", () => {
-
-    });
-
-    xit("should add every error message from an invalid ValidationRule to the errors Object", () => {
-
+    it("should check if a model attribute is valid by looking into the _errors field", () => {
+      modelInstance = new MeteorModelFixture();
+      modelInstance._errors = {
+        name: ["Invalid message 1", "Super invalid"],
+        items: ["Invalid message"]
+      };
+      assert.equal(modelInstance.isValidAttr("name"), false);
+      assert.equal(modelInstance.isValidAttr("email"), true);
+      assert.equal(modelInstance.isValidAttr("items"), false);
+      assert.equal(modelInstance.isValidAttr("active"), true);
     });
   });
 
   describe(".attr()", () => {
     describe("when no parameters are provided", () => {
-      xit("should retrieve all attributes", () => {
-
+      it("should retrieve all attributes", () => {
+        modelInstance = new MeteorModelFixture();
+        assert.equal(modelInstance.attr(), {
+          username: 'username-1',
+          email: 'david@guidion.com',
+          items: [{
+            name: "Item 1",
+            active: false
+          }],
+          active: false
+        });
       });
     });
 
     describe("when parameters are provided", () => {
-      describe("when only an attribute name is provided", () => {
-        xit("should retrieve the attribute value for the attribute name provided", () => {
-
+      describe("when only the attribute name is provided", () => {
+        it("should retrieve the attribute value for the attribute name provided", () => {
+          modelInstance = new MeteorModelFixture();
+          assert.equal(modelInstance.attr("items"), [{
+            name: "Item 1",
+            active: false
+          }]);
         });
       });
-      describe("when both attribute name and attribute value is provided", () => {
-        xit("should set the attribute value provided for the attribute name provided", () => {
 
+      describe("when both attribute name and attribute value is provided", () => {
+        it("should set the attribute value provided for the attribute name provided", () => {
+          modelInstance = new MeteorModelFixture();
+          modelInstance.attr("items", [{ name: "A different item", active: false }]);
+          assert.equal(modelInstance._attrs, {
+            username: 'username-1',
+            email: 'david@guidion.com',
+            items: [{
+              name: "A different item",
+              active: false
+            }],
+            active: false
+          });
         });
       });
     });
@@ -123,19 +174,37 @@ describe('MeteorModel', () => {
 
   describe('.removeAttr()', () => {
     it("should set to null a specific attribute", () => {
-
+      modelInstance = new MeteorModelFixture();
+      modelInstance.removeAttr("email");
+      assert.equal(modelInstance._attrs["email"], null);
     });
   });
 
   describe('.addAttrItem()', () => {
     it("should add an item to an list attribute", () => {
-
+      modelInstance = new MeteorModelFixture();
+      modelInstance.addAttrItem("items", {
+        name: "A New Item",
+        active: true
+      });
+      assert.equal(modelInstance._attrs["items"], [
+        {
+          name: "Item 1",
+          active: false
+        },
+        {
+          name: "A different item",
+          active: false
+        }
+      ]);
     });
   });
 
   describe('.removeAttrItem()', () => {
     it("should remove an item in a specific index from a list attribute", () => {
-
+      modelInstance = new MeteorModelFixture();
+      modelInstance.removeAttrItem("items", 0);
+      assert.equal(modelInstance._attrs["items"], []);
     });
   });
 

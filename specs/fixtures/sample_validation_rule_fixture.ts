@@ -18,6 +18,7 @@ export class SampleValidationRuleFixture2 extends ValidationRule {
       return true;
     },
     () => {
+      this.addInvalidMessage("Invalid message");
       return false;
     }
   ]
