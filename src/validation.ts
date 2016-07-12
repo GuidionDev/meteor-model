@@ -5,7 +5,8 @@ import {MeteorModel} from './model_entity';
  */
 export class ValidationRule implements IValidationRule {
   private conditions: Array<Function> = [];
-  public value:any
+  public fromValue:any;
+  public toValue:any
   public params:Object
   private _invalidMessage = "Invalid";
 
@@ -24,8 +25,9 @@ export class ValidationRule implements IValidationRule {
   /**
    * Checks if the ValidationRule is valid
    */
-  public isValid(value:any): Boolean {
-    this.value = value;
+  public isValid(fromValue:any, toValue:any): Boolean {
+    this.fromValue = fromValue;
+    this.toValue = toValue;
 
     // Reset the invalid message
     this._invalidMessage = '';
@@ -85,34 +87,19 @@ export class LengthValidator extends ValidationRule {
     () => {
       let match:Boolean = true;
 
-      if (this.value.length < this.params['min']) {
+      if (this.toValue.length < this.params['min']) {
         match = false;
-        this.addInvalidMessage(this.value + " is shorter than " + this.params['min']);
+        this.addInvalidMessage(this.toValue + " is shorter than " + this.params['min']);
       }
-      if (this.value.length > this.params['max']) {
+      if (this.toValue.length > this.params['max']) {
         match = false;
-        this.addInvalidMessage(this.value + " is longer than " + this.params['max']);
+        this.addInvalidMessage(this.toValue + " is longer than " + this.params['max']);
       }
 
       return match;
     }
   ]
 }
-
-// new StatusValidator({
-//   validStatusChanges: [
-//     { from: 0, to: [1, 2] },
-//
-//   ]
-// })
-//
-// class StatusValidator extends ValidationRule {
-//   private conditions:Array<Function> = [
-//     () => {
-//       this.params['']
-//     }
-//   ]
-// }
 
 /**
  * RegExpValidator
@@ -121,7 +108,7 @@ export class RegExpValidator extends ValidationRule {
   private conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
-      if (!this.value.match(this.params['rule'])) {
+      if (!this.toValue.match(this.params['rule'])) {
         match = false;
       }
       return match;
@@ -138,8 +125,8 @@ export class EmailValidator extends ValidationRule {
     () => {
       let match:Boolean = true;
       const regExpValidator = new RegExpValidator({ rule: /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i });
-      if (!regExpValidator.isValid(this.value)) {
-        this.addInvalidMessage(this.value + ' is not a valid email address');
+      if (!regExpValidator.isValid(this.toValue)) {
+        this.addInvalidMessage(this.toValue + ' is not a valid email address');
         match = false;
       }
       return match;
@@ -155,10 +142,39 @@ export class RequiredValidator extends ValidationRule {
   private conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
-      if (!this.value) {
+      if (!this.toValue) {
         match = false;
         this.addInvalidMessage("A value is required and was not provided");
       }
+      return match;
+    }
+  ]
+}
+
+class AllowedValueSwitch extends ValidationRule {
+  private validChanges:Array<Object> = [
+    // Sample of value changes declaration:
+    // { from: "open", to: ["scheduled", "canceled", "closed"] }
+  ]
+
+  private conditions:Array<Function> = [
+    () => {
+      let match:Boolean = false;
+
+      for (let i = 0; i < this.validChanges.length; i++) {
+        if (this.fromValue === this.validChanges[i]['from'] && !match) {
+          for (let i2 = 0; i2 < this.validChanges[i]['to'].length; i2++) {
+            if (this.fromValue === this.validChanges[i]['to'][i2] && !match) {
+              match = true;
+            }
+          }
+        }
+      }
+
+      if (!match) {
+        this.addInvalidMessage(this.fromValue + " cannot change to '" + this.toValue + "'");
+      }
+
       return match;
     }
   ]

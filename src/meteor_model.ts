@@ -147,7 +147,7 @@ export default class MeteorModel {
     for (let i = 0; i < this.validationRules[attributeName].length; i++) {
       let validationRule = this.validationRules[attributeName][i];
       // Check if entity is valid and collect all validation errors if any
-      if (!validationRule.isValid(this.attr(attributeName))) {
+      if (!validationRule.isValid(/* TODO: pass previous value */ null, this.attr(attributeName))) {
         // Add the validator message to the MeteorModel
         this.addValidationError(attributeName, validationRule.getInvalidMessage());
         matchAllValidations = false;
