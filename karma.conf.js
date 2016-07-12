@@ -7,14 +7,23 @@ module.exports = function(config) {
     // base path that will be used to resolve all patterns (eg. files, exclude)
     basePath: './',
 
-    frameworks: ['jasmine'],
+    frameworks: ['jasmine', 'requirejs'],
+
+    preprocessors: {
+      'src-js/**/*.js': ['babel']
+    },
+
+    babelPreprocessor: {
+      options: {
+        presets: ['es2015'],
+        sourceMap: 'inline'
+      }
+    },
 
     // files && patterns to load in the browser
     files: [
       // Dependencies
-      { pattern: 'node_modules/es6-promise/dist/es6-promise.min.js', included: true },
-      { pattern: 'node_modules/karma-requirejs/lib/index.js', included: true },
-
+      // { pattern: 'node_modules/es6-promise/dist/es6-promise.min.js', included: true },
 
       // Meteor model
       { pattern: 'src-js/src/meteor_model.js', included: true },
