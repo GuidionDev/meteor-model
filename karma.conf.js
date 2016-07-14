@@ -5,7 +5,7 @@ module.exports = function(config) {
   config.set({
 
     // base path that will be used to resolve all patterns (eg. files, exclude)
-    basePath: './',
+    basePath: '',
 
     frameworks: ['jasmine', 'requirejs'],
 
@@ -23,6 +23,7 @@ module.exports = function(config) {
     // files && patterns to load in the browser
     files: [
       // Dependencies
+      { pattern: 'node_modules/requirejs/require.js', included: true },
       // { pattern: 'node_modules/es6-promise/dist/es6-promise.min.js', included: true },
 
       // Meteor model
@@ -35,12 +36,7 @@ module.exports = function(config) {
 
       // Specs
       { pattern: 'src-js/specs/meteor_model_specs.js', included: true },
-    ],
-
-
-    // list of files to exclude
-    exclude: [
-
+      { pattern: 'src-js/specs/validation_specs.js', included: true }
     ],
 
     client: {

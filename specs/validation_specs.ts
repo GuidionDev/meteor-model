@@ -1,9 +1,6 @@
 import { assert } from 'meteor/practicalmeteor:chai';
 import {ValidationRule} from "./validation";
 
-declare var describe: any;
-declare var it: any;
-
 describe("ValidationRule", () => {
   describe('.constructor()', () => {
     xit("should assign the value and validator params within the instance", () => {

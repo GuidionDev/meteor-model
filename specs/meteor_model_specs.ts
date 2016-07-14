@@ -2,10 +2,6 @@ import MeteorModel from "../src/meteor_model";
 import MeteorModelFixture from "./fixtures/meteor_model_fixture";
 import {assert} from 'meteor/practicalmeteor:chai';
 
-declare var describe: any;
-declare var it: any;
-declare var xit: any;
-
 const meteorModelFixture = new MeteorModelFixture();
 let modelInstance;
 

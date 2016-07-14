@@ -3,9 +3,6 @@ import {_} from 'meteor/underscore';
 import { Mongo } from 'meteor/mongo';
 import { Meteor} from 'meteor/meteor';
 
-declare var Meteor: any;
-declare var Promise: any;
-
 /**
  * Implements a base class on top of we implement our models.
  * It works in the server and in the browser.
@@ -247,9 +244,16 @@ export default class MeteorModel {
   public fetch() : Promise<MeteorModel>|MeteorModel {
     if (Meteor.isClient) {
       console.log("Running .fetch() in the client");
-      return new Promise((resolve, reject) => {
+      if (Meteor.isServer) {
+        return Mongo.Collection.get(this['COLLECTION_NAME']).find({_id: this._id}, (err, cursor) => {
+          if (!err && cursor) {
+            console.log('cursor: ', cursor);
+            this._attrs = cursor;
+          }
+        });
+      } else {
 
-      });
+      }
     }
   }
 
@@ -326,7 +330,7 @@ export default class MeteorModel {
       console.log('Running #fetchOne() in the frontend from this id: ', id);
     }
 
-    return Mongo.Collection.get(this['COLLECTION_NAME']).findOne({}, { transform: (doc) => {
+    return Mongo.Collection.get(this['COLLECTION_NAME']).findOne({_id: id}, { transform: (doc) => {
       return this.buildFromMongoDoc(doc);
     }});
   }
