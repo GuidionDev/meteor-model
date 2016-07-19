@@ -1,5 +1,5 @@
 import { assert } from 'meteor/practicalmeteor:chai';
-import {ValidationRule} from "./validation";
+import {ValidationRule} from "meteor-model";
 
 describe("ValidationRule", () => {
   describe('.constructor()', () => {

@@ -1,0 +1,8 @@
+{
+  "resolution": "main",
+  "tree": {
+    "src": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/b6e28f381b1f30bedafcafd4d703d920d260146d/underscore/underscore.d.ts",
+    "raw": "registry:dt/underscore#1.7.0+20160412141459",
+    "typings": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/b6e28f381b1f30bedafcafd4d703d920d260146d/underscore/underscore.d.ts"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "diagnostics": false
+  },
+  "files": [
+    "unit/meteor_model.specs.ts",
+    "unit/validation.specs.ts"
+  ]
+}

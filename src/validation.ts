@@ -1,5 +1,3 @@
-import {MeteorModel} from './model_entity';
-
 /**
  * Represents a validation rule
  */

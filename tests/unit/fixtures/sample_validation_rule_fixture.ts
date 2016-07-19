@@ -1,4 +1,4 @@
-import {ValidationRule} from "../../src/validation";
+import {ValidationRule} from "meteor-model";
 
 export class SampleValidationRuleFixture extends ValidationRule {
   private conditions:Array<Function> = [
@@ -10,7 +10,6 @@ export class SampleValidationRuleFixture extends ValidationRule {
     }
   ]
 }
-
 
 export class SampleValidationRuleFixture2 extends ValidationRule {
   private conditions:Array<Function> = [

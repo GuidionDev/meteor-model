@@ -10,9 +10,17 @@ Implements a basic functionality to build Meteor models that hold business logic
 ##### 4. Subscribe to a Meteor publication
 ##### 5. Persist data through a Meteor endpoint
 
+##### To run unit tests:
+##### tsc
+##### cd tests
+##### linklocal
+##### meteor test --driver-package=practicalmeteor:mocha
+
+##### ill fix a shell cmd for it 2morrow
+
 #### TO-DO
 
-##### 1. Make karma run
+##### 1. Make tests run (Complete)
 ##### 2. Write meteor-model unit tests
 ##### 3. Write ValidationRule tests
 ##### 4. Write LengthValidatorParams tests

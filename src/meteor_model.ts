@@ -1,13 +1,10 @@
 import {ValidationRule} from './validation';
-import {_} from 'meteor/underscore';
-import { Mongo } from 'meteor/mongo';
-import { Meteor} from 'meteor/meteor';
 
 /**
  * Implements a base class on top of we implement our models.
  * It works in the server and in the browser.
  */
-export default class MeteorModel {
+export class MeteorModel {
   public _id:number
   private transport = "Meteor";
   private _attrs: Object

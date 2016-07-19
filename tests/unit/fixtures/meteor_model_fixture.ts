@@ -1,7 +1,7 @@
-import MeteorModel from "../../src/meteor_model";
-import {ValidationRule} from "../../src/validation";
+import {MeteorModel, ValidationRule} from "meteor-model";
 import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./sample_validation_rule_fixture";
 
+/// <reference path="meteor-model.d.ts" />
 export default class MeteorModelFixture extends MeteorModel {
   public static COLLECTION_NAME = "collection";
   public static METEOR_METHOD_PREFIX = "collection";

@@ -1,4 +1,4 @@
-import MeteorModel from "../src/meteor_model";
+import {MeteorModel} from "meteor-model";
 import MeteorModelFixture from "./fixtures/meteor_model_fixture";
 import {assert} from 'meteor/practicalmeteor:chai';
 
