@@ -6,6 +6,8 @@ export default class MeteorModelFixture extends MeteorModel {
   public static COLLECTION_NAME = "collection";
   public static METEOR_METHOD_PREFIX = "collection";
 
+  constructor(initialAttributes:Object) { super(initialAttributes); }
+
   public defaults() {
     return {
       username: 'username-1',
