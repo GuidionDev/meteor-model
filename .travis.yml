@@ -13,8 +13,9 @@ install:
 
 script:
   - tsc
+  - npm link
   - cd tests
-  - linklocal
+  - npm link meteor-model
   - meteor test --once --driver-package dispatch:mocha-phantomjs
 
 sudo: required

@@ -15,8 +15,8 @@ export class ValidationRule implements IValidationRule {
 
   /**
    * Retrieves the invalid message for the ValidationRule
-   */
-  public getInvalidMessage() {
+   */  
+  get invalidMessage(): string {
     return this._invalidMessage;
   }
 
@@ -64,9 +64,9 @@ export class ValidationRule implements IValidationRule {
  * ValidationRule implementation
  */
 interface IValidationRule {
-  validateAttrs: Array<any>
-  params: any
-  conditions: Array<Function|any>;
+  //validateAttrs: Array<any>
+  params: any;
+  //conditions: Array<Function|any>;
   invalidMessage: String;
   addCondition(Function);
   removeCondition(index);

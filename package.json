@@ -6,7 +6,7 @@
   "scripts": {
 	"build": "npm run build-only",
     "build-only": "tsc || echo not ok",	
-    "test": "run_tests.cmd"
+    "test": "npm run build && cd tests && linklocal && meteor test --driver-package=practicalmeteor:mocha"
   },
   "author": "Guidion B.V.",
   "license": "Copyright",
