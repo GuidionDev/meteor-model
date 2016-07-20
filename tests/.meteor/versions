@@ -21,6 +21,8 @@ ddp-common@1.2.6
 ddp-server@1.2.9
 deps@1.0.12
 diff-sequence@1.0.6
+dispatch:mocha-phantomjs@0.1.7
+dispatch:phantomjs-tests@0.0.5
 ecmascript@0.4.7
 ecmascript-runtime@0.2.12
 ejson@1.0.12
