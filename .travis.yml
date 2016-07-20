@@ -11,6 +11,12 @@ install:
   - npm install
   - npm install -g linklocal
 
-script: ./run_tests_ci.sh
+script: 
+  - ./run_tests_ci.sh
+  - tsc
+  - cd tests
+  - linklocal
+  - npm install
+  - meteor test --once --driver-package dispatch:mocha-phantomjs
 
 sudo: required
