@@ -141,6 +141,14 @@ export class MeteorModel {
   }
 
   /**
+   * Checks if the model is a valid model according to its ValidationRules
+   */
+  public isValid() {
+    let invalidAttrs = Object.keys(this['_errors']);
+    return (invalidAttrs.length === 0 ? true : false);
+  }
+
+  /**
    * Validates a model attribute according to its ValidationRules
    */
   public validateAttr(attributeName:string) {
@@ -161,18 +169,26 @@ export class MeteorModel {
   }
 
   /**
-   * Checks if the model is a valid model according to its ValidationRules
-   */
-  public isValid() {
-    let invalidAttrs = Object.keys(this['_errors']);
-    return (invalidAttrs.length === 0 ? true : false);
-  }
-
-  /**
    * Checks weather an attribute value is valid
    */
   public isValidAttr(attributeName:string) : boolean {
     return (this.getAttrErrors(attributeName).length === 0 ? true : false);
+  }
+
+  /**
+   * Checks wether the model has attributes changed since the last sync
+   */
+  public hasChanged():boolean {
+    // TODO: Implement
+    return false;
+  }
+
+  /**
+   * Checks wether a model attribute has changed since the last sync
+   */
+  public hasAttrChanged(attrName:string):boolean {
+    // TODO: Implement
+    return false;
   }
 
   /**

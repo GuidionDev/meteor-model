@@ -108,6 +108,14 @@ describe('MeteorModel', function () {
             practicalmeteor_chai_1.assert.equal(modelInstance.isValidAttr("active"), true);
         });
     });
+    describe('.hasChanged()', function () {
+        it("it should check wether the record has been changed since the last sync", function () {
+        });
+    });
+    describe('.hasAttrChanged()', function () {
+        it("it should check wether a specific attribute on a record has been changed since the last sync", function () {
+        });
+    });
     describe(".attr()", function () {
         describe("when no parameters are provided", function () {
             it("should retrieve all attributes", function () {
