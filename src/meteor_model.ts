@@ -14,13 +14,18 @@ export class MeteorModel {
   public static METEOR_METHOD_RESOURCE_NAME = null
 
   constructor(initialAttributes:Object = {}) {
+
     this._attrs = { id: null };
     this._errors = {};
 
     // Extend with defaults first
     _.extend(this._attrs, this.defaults());
-    // Extend with initialization attributes too
-    _.extend(this._attrs, initialAttributes);
+
+    // Merge with initialization attributes too
+    const initialAttributesKeys = Object.keys(initialAttributes);
+    for (let i = 0; i < initialAttributesKeys.length; i++) {
+      this._attrs[initialAttributesKeys[i]] = initialAttributes[initialAttributesKeys[i]];
+    }
   }
 
   get errors() { return this._errors; }
@@ -75,16 +80,19 @@ export class MeteorModel {
     this._errors[attributeName].push(errorMessage);
   }
 
+
   /**
    * Validates the model according to its ValidationRules
    */
   public validate() {
+    console.log('validation the record!');
     this.beforeValidation();
 
     // Reset errors
-    this['_errors'] = {};
+    this._errors = {};
 
     let attrNames = Object.keys(this._attrs);
+    console.log('attribute names: ', attrNames);
 
     /*
       Model attributes:
@@ -133,25 +141,6 @@ export class MeteorModel {
   }
 
   /**
-   * Validates a model attribute according to its ValidationRules
-   */
-  public validateAttr(attributeName:string) {
-    let matchAllValidations = true;
-
-    for (let i = 0; i < this.validationRules[attributeName].length; i++) {
-      let validationRule = this.validationRules[attributeName][i];
-      // Check if entity is valid and collect all validation errors if any
-      if (!validationRule.isValid(/* TODO: pass previous value */ null, this.attr(attributeName))) {
-        // Add the validator message to the MeteorModel
-        this.addValidationError(attributeName, validationRule.getInvalidMessage());
-        matchAllValidations = false;
-      }
-    }
-
-    return matchAllValidations;
-  }
-
-  /**
    * Checks if the model is a valid model according to its ValidationRules
    */
   public isValid() {
@@ -160,10 +149,46 @@ export class MeteorModel {
   }
 
   /**
+   * Validates a model attribute according to its ValidationRules
+   */
+  public validateAttr(attributeName:string) {
+    let matchAllValidations = true;
+
+    for (let i = 0; i < this.validationRules[attributeName].length; i++) {
+      let validationRule = this.validationRules[attributeName][i];
+      console.log('checking validation rule for attr: ', attributeName);
+      // Check if entity is valid and collect all validation errors if any
+      if (!validationRule.isValid(/* TODO: pass previous value */ null, this.attr(attributeName))) {
+        // Add the validator message to the MeteorModel
+        this.addValidationError(attributeName, validationRule._invalidMessage);
+        matchAllValidations = false;
+      }
+    }
+
+    return matchAllValidations;
+  }
+
+  /**
    * Checks weather an attribute value is valid
    */
   public isValidAttr(attributeName:string) : boolean {
     return (this.getAttrErrors(attributeName).length === 0 ? true : false);
+  }
+
+  /**
+   * Checks wether the model has attributes changed since the last sync
+   */
+  public hasChanged():boolean {
+    // TODO: Implement
+    return false;
+  }
+
+  /**
+   * Checks wether a model attribute has changed since the last sync
+   */
+  public hasAttrChanged(attrName:string):boolean {
+    // TODO: Implement
+    return false;
   }
 
   /**
@@ -187,8 +212,9 @@ export class MeteorModel {
   /**
    * Removes an attribute value from the model attributes
    */
-  public removeAttr(key:string) : void {
+  public removeAttr(key:string, sync:boolean = false) : void {
     this.attr(key, null);
+    if (sync) { this.save(); }
   }
 
   /**

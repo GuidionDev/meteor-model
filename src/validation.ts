@@ -15,7 +15,7 @@ export class ValidationRule implements IValidationRule {
 
   /**
    * Retrieves the invalid message for the ValidationRule
-   */  
+   */
   get invalidMessage(): string {
     return this._invalidMessage;
   }
@@ -44,32 +44,15 @@ export class ValidationRule implements IValidationRule {
   public addInvalidMessage(message:String) {
     this._invalidMessage += message;
   }
-
-  /**
-   * Ads a ValidationRuleCondition to the ValidationRule
-   */
-  public addCondition(condition:Function): void {
-    this.conditions.push(condition);
-  }
-
-  /**
-   * Removes a ValidationRuleCondition from the ValidationRule
-   */
-  public removeCondition(index): void {
-    this.conditions.splice(index, 1);
-  }
 }
 
 /**
  * ValidationRule implementation
  */
-interface IValidationRule {
-  //validateAttrs: Array<any>
+export interface IValidationRule {
   params: any;
-  //conditions: Array<Function|any>;
+  conditions: Array<Function|any>;
   invalidMessage: String;
-  addCondition(Function);
-  removeCondition(index);
 
   validate();
 }
@@ -106,7 +89,7 @@ export class RegExpValidator extends ValidationRule {
   private conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
-      if (!this.toValue.match(this.params['rule'])) {
+      if (!this.toValue || !this.toValue.match || !this.toValue.match(this.params['rule'])) {
         match = false;
       }
       return match;
@@ -123,7 +106,7 @@ export class EmailValidator extends ValidationRule {
     () => {
       let match:Boolean = true;
       const regExpValidator = new RegExpValidator({ rule: /^[-a-z0-9~!$%^&*_=+}{\'?]+(\.[-a-z0-9~!$%^&*_=+}{\'?]+)*@([a-z0-9_][-a-z0-9_]*(\.[-a-z0-9_]+)*\.(aero|arpa|biz|com|coop|edu|gov|info|int|mil|museum|name|net|org|pro|travel|mobi|[a-z][a-z])|([0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}))(:[0-9]{1,5})?$/i });
-      if (!regExpValidator.isValid(this.toValue)) {
+      if (!regExpValidator.isValid(this.fromValue, this.toValue)) {
         this.addInvalidMessage(this.toValue + ' is not a valid email address');
         match = false;
       }
@@ -140,7 +123,7 @@ export class RequiredValidator extends ValidationRule {
   private conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
-      if (!this.toValue) {
+      if (typeof(this.toValue) === "undefined") {
         match = false;
         this.addInvalidMessage("A value is required and was not provided");
       }

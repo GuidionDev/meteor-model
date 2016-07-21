@@ -2,13 +2,13 @@ import {MeteorModel} from "meteor-model";
 import MeteorModelFixture from "./fixtures/meteor_model_fixture";
 import {assert} from 'meteor/practicalmeteor:chai';
 
-const meteorModelFixture = new MeteorModelFixture(undefined);
+const meteorModelFixture = new MeteorModelFixture();
 let modelInstance;
 
 describe('MeteorModel', () => {
   describe(".constructor()", () => {
     it("should set initial attributes containing a null id attribute", (done) => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
 
       assert.isDefined(modelInstance._attrs['id']);
       assert.equal(modelInstance._attrs['id'], null);
@@ -16,10 +16,11 @@ describe('MeteorModel', () => {
     });
 
     it("should set the default attributes", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
 
       assert.isDefined(modelInstance._attrs);
       assert.deepEqual(modelInstance._attrs, {
+        id: null,
         username: 'username-1',
         email: 'david@guidion.com',
         items: [{
@@ -39,7 +40,8 @@ describe('MeteorModel', () => {
         }],
       });
 
-      assert.equal(modelInstance._attrs, {
+      assert.deepEqual(modelInstance._attrs, {
+        id: null,
         username: 'username-10001',
         email: 'david@guidion.com',
         items: [{
@@ -48,33 +50,34 @@ describe('MeteorModel', () => {
         }],
         active: false
       });
+
     });
   });
 
   describe('.isNew()', () => {
     it("should check wether the record is a new a record not persisted to the database", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
       assert.equal(modelInstance.isNew(), true);
-      modelInstance._attrs['id'] = 1001;
+      modelInstance._id = 1001;
       assert.equal(modelInstance.isNew(), false);
     });
   });
 
   describe(".addValidationError()", () => {
     it("should add an error message to the errors object on an specific attribute name", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
       assert.equal(modelInstance.addValidationError());
     });
   });
 
   describe(".validate()", () => {
     it("should validate all the ValidationRules for every attribute and build a list of errors for every invalid attribute", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
 
-      assert.equal(modelInstance._errors, {});
+      assert.deepEqual(modelInstance._errors, {});
       modelInstance.validate();
-      assert.equal(modelInstance._errors, {
-        name:  ["Invalid message"],
+      assert.deepEqual(modelInstance._errors, {
+        username:  ["Invalid message"],
         items: ["Invalid message"]
       });
     });
@@ -82,7 +85,7 @@ describe('MeteorModel', () => {
 
   describe(".isValid()", () => {
     it("should check if the model attributes are valid by looking into the _errors field", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
       modelInstance._errors = {
         name:  ["Invalid message 1", "Super invalid"],
         items: ["Invalid message"]
@@ -95,7 +98,7 @@ describe('MeteorModel', () => {
 
   describe(".validateAttr()", () => {
     it("should validate a specific attribute using its ValidationRules and update the _errors field with the invalid messages", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
       modelInstance._errors = {
         name: ["Invalid message 1", "Super invalid"],
         // Note that errors for "items" is not there
@@ -111,7 +114,7 @@ describe('MeteorModel', () => {
 
   describe(".isValidAttr()", () => {
     it("should check if a model attribute is valid by looking into the _errors field", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
       modelInstance._errors = {
         name: ["Invalid message 1", "Super invalid"],
         items: ["Invalid message"]
@@ -123,11 +126,24 @@ describe('MeteorModel', () => {
     });
   });
 
+  describe('.hasChanged()', () => {
+    it("it should check wether the record has been changed since the last sync", () => {
+
+    });
+  });
+
+  describe('.hasAttrChanged()', () => {
+    it("it should check wether a specific attribute on a record has been changed since the last sync", () => {
+      
+    });
+  });
+
   describe(".attr()", () => {
     describe("when no parameters are provided", () => {
       it("should retrieve all attributes", () => {
-        modelInstance = new MeteorModelFixture(undefined);
-        assert.equal(modelInstance.attr(), {
+        modelInstance = new MeteorModelFixture();
+        assert.deepEqual(modelInstance.attr(), {
+          id: null,
           username: 'username-1',
           email: 'david@guidion.com',
           items: [{
@@ -142,7 +158,7 @@ describe('MeteorModel', () => {
     describe("when parameters are provided", () => {
       describe("when only the attribute name is provided", () => {
         it("should retrieve the attribute value for the attribute name provided", () => {
-          modelInstance = new MeteorModelFixture(undefined);
+          modelInstance = new MeteorModelFixture();
           assert.deepEqual(modelInstance.attr("items"), [{
             name: "Item 1",
             active: false
@@ -152,9 +168,10 @@ describe('MeteorModel', () => {
 
       describe("when both attribute name and attribute value is provided", () => {
         it("should set the attribute value provided for the attribute name provided", () => {
-          modelInstance = new MeteorModelFixture(undefined);
+          modelInstance = new MeteorModelFixture();
           modelInstance.attr("items", [{ name: "A different item", active: false }]);
           assert.deepEqual(modelInstance._attrs, {
+            id: null,
             username: 'username-1',
             email: 'david@guidion.com',
             items: [{
@@ -170,7 +187,7 @@ describe('MeteorModel', () => {
 
   describe('.removeAttr()', () => {
     it("should set to null a specific attribute", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
       modelInstance.removeAttr("email");
       assert.equal(modelInstance._attrs["email"], null);
     });
@@ -178,7 +195,7 @@ describe('MeteorModel', () => {
 
   describe('.addAttrItem()', () => {
     it("should add an item to an list attribute", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
       modelInstance.addAttrItem("items", {
         name: "A New Item",
         active: true
@@ -189,8 +206,8 @@ describe('MeteorModel', () => {
           active: false
         },
         {
-          name: "A different item",
-          active: false
+          name: "A New Item",
+          active: true
         }
       ]);
     });
@@ -198,7 +215,7 @@ describe('MeteorModel', () => {
 
   describe('.removeAttrItem()', () => {
     it("should remove an item in a specific index from a list attribute", () => {
-      modelInstance = new MeteorModelFixture(undefined);
+      modelInstance = new MeteorModelFixture();
       modelInstance.removeAttrItem("items", 0);
       assert.deepEqual(modelInstance._attrs["items"], []);
     });

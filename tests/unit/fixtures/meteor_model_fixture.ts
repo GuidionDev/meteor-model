@@ -21,7 +21,7 @@ export default class MeteorModelFixture extends MeteorModel {
   }
 
   private validationRules = {
-    'name':     [new SampleValidationRuleFixture(), new SampleValidationRuleFixture2()],
+    'username': [new SampleValidationRuleFixture(), new SampleValidationRuleFixture2()],
     'email':    [new SampleValidationRuleFixture()],
     'items':    [new SampleValidationRuleFixture2()],
     'active':   []
