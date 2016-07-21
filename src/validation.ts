@@ -89,7 +89,7 @@ export class RegExpValidator extends ValidationRule {
   private conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
-      if (!this.toValue.match(this.params['rule'])) {
+      if (!this.toValue || !this.toValue.match || !this.toValue.match(this.params['rule'])) {
         match = false;
       }
       return match;
@@ -123,7 +123,7 @@ export class RequiredValidator extends ValidationRule {
   private conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
-      if (!this.toValue) {
+      if (typeof(this.toValue) === "undefined") {
         match = false;
         this.addInvalidMessage("A value is required and was not provided");
       }

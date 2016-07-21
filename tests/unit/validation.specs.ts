@@ -56,7 +56,7 @@ describe("LengthValidator", () => {
       value = [];
     });
     describe("when the value is below the minimum", () => {
-      it("should validate that the number of the destination Array value is between the minimum and the maxium", () => {
+      it("should validate that the number of the destination Array value is below the minimum", () => {
         value = [1,2];
         assert.equal(lengthValidator.isValid(null, value), false);
       });
@@ -79,7 +79,7 @@ describe("LengthValidator", () => {
 
   describe("when the value to validate is of a type String", () => {
     describe("when the value is below the minimum", () => {
-      it("should validate that the size of the destination string value is between the minimum and the maxium", () => {
+      it("should validate that the size of the destination string value is below the minimum", () => {
         value = "ab";
         assert.equal(lengthValidator.isValid(null, value), false);
       });
@@ -114,14 +114,51 @@ describe("RegExpValidator", () => {
 });
 
 describe("EmailValidator", () => {
-  xit("should validate that the destination value is an email", () => {
+  let emailValidator = new EmailValidator();
 
+  describe("when the value to validate has valid email values", () => {
+    let invalidEmails = [];
+    beforeEach(() => {
+      invalidEmails = [undefined, null, 1, "holacomoestas", "hola@como", "hola@@comoestas.com"];
+    });
+
+    it("should be invalid", () => {
+      for (let i = 0; i < invalidEmails.length-1; i++) {
+        assert.equal(emailValidator.isValid(null, invalidEmails[i]), false);
+      }
+    });
+  });
+
+  describe("when the value to validate has invalid email values", () => {
+    let validEmails = [];
+    beforeEach(() => {
+      validEmails = ["hola@davidvalin.com", "si@si.com"];
+    });
+
+    it("should be valid", () => {
+      for (let i = 0; i < validEmails.length-1; i++) {
+        assert.equal(emailValidator.isValid(null, validEmails[i]), true);
+      }
+    });
   });
 });
 
 describe("RequiredValidator", () => {
-  xit("should validate that the destination value has a value", () => {
+  let requiredValidator = new RequiredValidator();
+  describe("when the value is not provided", () => {
+    it("should be invalid", () => {
+      assert.equal(requiredValidator.isValid(), false);
+    });
+  });
 
+  describe("when the value is provided", () => {
+    it("should be valid", () => {
+      assert.equal(requiredValidator.isValid(null, "ac00oOooOLValue"), true);
+    });
+  });
+
+  it("should validate that the destination value has a value", () => {
+    assert.equal(requiredValidator.isValid(null), false);
   });
 });
 
