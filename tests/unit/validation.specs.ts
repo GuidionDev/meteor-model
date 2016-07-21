@@ -39,20 +39,10 @@ describe("ValidationRule", () => {
   });
 
   describe('.addInvalidMessage()', () => {
-    xit("should add a message to the invalid messages", () => {
-
-    });
-  });
-
-  describe('.addCondition()', () => {
-    xit("should add a condition to the ValidationRule conditions", () => {
-
-    });
-  });
-
-  describe('.removeCondition()', () => {
-    xit("should remove a condition from the ValidationRule conditions", () => {
-
+    it("should add a message to the invalid messages", () => {
+      assert.equal(validationRule._invalidMessage, "");
+      validationRule.addInvalidMessage("A new invalid message describing the error");
+      assert.equal(validationRule._invalidMessage, "A new invalid message describing the error");
     });
   });
 });

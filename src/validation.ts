@@ -44,32 +44,15 @@ export class ValidationRule implements IValidationRule {
   public addInvalidMessage(message:String) {
     this._invalidMessage += message;
   }
-
-  /**
-   * Ads a ValidationRuleCondition to the ValidationRule
-   */
-  public addCondition(condition:Function): void {
-    this.conditions.push(condition);
-  }
-
-  /**
-   * Removes a ValidationRuleCondition from the ValidationRule
-   */
-  public removeCondition(index): void {
-    this.conditions.splice(index, 1);
-  }
 }
 
 /**
  * ValidationRule implementation
  */
-interface IValidationRule {
-  //validateAttrs: Array<any>
+export interface IValidationRule {
   params: any;
-  //conditions: Array<Function|any>;
+  conditions: Array<Function|any>;
   invalidMessage: String;
-  addCondition(Function);
-  removeCondition(index);
 
   validate();
 }

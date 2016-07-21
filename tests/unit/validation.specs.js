@@ -34,15 +34,10 @@ describe("ValidationRule", function () {
         });
     });
     describe('.addInvalidMessage()', function () {
-        xit("should add a message to the invalid messages", function () {
-        });
-    });
-    describe('.addCondition()', function () {
-        xit("should add a condition to the ValidationRule conditions", function () {
-        });
-    });
-    describe('.removeCondition()', function () {
-        xit("should remove a condition from the ValidationRule conditions", function () {
+        it("should add a message to the invalid messages", function () {
+            practicalmeteor_chai_1.assert.equal(validationRule._invalidMessage, "");
+            validationRule.addInvalidMessage("A new invalid message describing the error");
+            practicalmeteor_chai_1.assert.equal(validationRule._invalidMessage, "A new invalid message describing the error");
         });
     });
 });
