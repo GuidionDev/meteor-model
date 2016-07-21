@@ -1,6 +1,7 @@
 "use strict";
 var practicalmeteor_chai_1 = require('meteor/practicalmeteor:chai');
 var meteor_model_1 = require("meteor-model");
+var sample_validation_rule_fixture_1 = require("./fixtures/sample_validation_rule_fixture");
 describe("ValidationRule", function () {
     var validationRule;
     beforeEach(function () {
@@ -23,7 +24,13 @@ describe("ValidationRule", function () {
             practicalmeteor_chai_1.assert.isDefined(validationRule['toValue']);
             practicalmeteor_chai_1.assert.equal(validationRule['toValue'], "new value");
         });
-        it("should validate every condition setted up under 'conditions' attribute", function () {
+        it("should return true when all the ValidationRule conditions return true", function () {
+            var sampleValidationRuleFixture = new sample_validation_rule_fixture_1.SampleValidationRuleFixture();
+            practicalmeteor_chai_1.assert.equal(sampleValidationRuleFixture.isValid(), true);
+        });
+        it("should return false when at least one of the ValidationRule conditions return false", function () {
+            var sampleValidationRuleFixture2 = new sample_validation_rule_fixture_1.SampleValidationRuleFixture2();
+            practicalmeteor_chai_1.assert.equal(sampleValidationRuleFixture2.isValid(), false);
         });
     });
     describe('.addInvalidMessage()', function () {

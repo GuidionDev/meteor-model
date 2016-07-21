@@ -1,5 +1,6 @@
 import { assert } from 'meteor/practicalmeteor:chai';
 import {ValidationRule} from "meteor-model";
+import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./fixtures/sample_validation_rule_fixture";
 
 describe("ValidationRule", () => {
   let validationRule;
@@ -27,8 +28,13 @@ describe("ValidationRule", () => {
       assert.isDefined(validationRule['toValue']);
       assert.equal(validationRule['toValue'], "new value");
     });
-    it("should validate every condition setted up under 'conditions' attribute", () => {
-
+    it("should return true when all the ValidationRule conditions return true", () => {
+      const sampleValidationRuleFixture = new SampleValidationRuleFixture();
+      assert.equal(sampleValidationRuleFixture.isValid(), true);
+    });
+    it("should return false when at least one of the ValidationRule conditions return false", () => {
+      const sampleValidationRuleFixture2 = new SampleValidationRuleFixture2();
+      assert.equal(sampleValidationRuleFixture2.isValid(), false);
     });
   });
 
