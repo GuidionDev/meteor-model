@@ -41,3 +41,33 @@ describe("ValidationRule", function () {
         });
     });
 });
+describe("LengthValidatorParams", function () {
+    describe("when the value to validate is of a type Array", function () {
+        it("should validate that the number of the destination Array value match with a specific number of items", function () {
+        });
+    });
+    describe("when the value to validate is of a type String", function () {
+        it("should validate that the length of the destination String value match with a specific size", function () {
+        });
+    });
+});
+describe("RegExpValidator", function () {
+    it("should validate that the destination value match with a specific RegExp", function () {
+    });
+});
+describe("RegExpValidator", function () {
+    it("should validate that the destination value is an email", function () {
+    });
+});
+describe("EmailValidator", function () {
+    it("should validate that the destination value is an email", function () {
+    });
+});
+describe("RequiredValidator", function () {
+    it("should validate that the destination value has a value", function () {
+    });
+});
+describe("AllowedValueSwitch", function () {
+    it("should validate that a value can be changed to a specific list of values", function () {
+    });
+});

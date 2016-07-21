@@ -46,3 +46,47 @@ describe("ValidationRule", () => {
     });
   });
 });
+
+describe("LengthValidatorParams", () => {
+  describe("when the value to validate is of a type Array", () => {
+    it("should validate that the number of the destination Array value match with a specific number of items", () => {
+
+    });
+  });
+
+  describe("when the value to validate is of a type String", () => {
+    it("should validate that the length of the destination String value match with a specific size", () => {
+
+    });
+  });
+});
+
+describe("RegExpValidator", () => {
+  it("should validate that the destination value match with a specific RegExp", () => {
+
+  });
+});
+
+describe("RegExpValidator", () => {
+  it("should validate that the destination value is an email", () => {
+
+  });
+});
+
+describe("EmailValidator", () => {
+  it("should validate that the destination value is an email", () => {
+
+  });
+});
+
+describe("RequiredValidator", () => {
+  it("should validate that the destination value has a value", () => {
+
+  });
+});
+
+describe("AllowedValueSwitch", () => {
+  it("should validate that a value can be changed to a specific list of values", () => {
+
+  });
+});
