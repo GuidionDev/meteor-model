@@ -1,5 +1,5 @@
 import { assert } from 'meteor/practicalmeteor:chai';
-import {ValidationRule} from "meteor-model";
+import {ValidationRule, LengthValidator, RegExpValidator, EmailValidator, RequiredValidator, AllowedValueSwitch} from "meteor-model";
 import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./fixtures/sample_validation_rule_fixture";
 
 describe("ValidationRule", () => {
@@ -47,46 +47,86 @@ describe("ValidationRule", () => {
   });
 });
 
-describe("LengthValidatorParams", () => {
-  describe("when the value to validate is of a type Array", () => {
-    it("should validate that the number of the destination Array value match with a specific number of items", () => {
+describe("LengthValidator", () => {
+  let lengthValidator = new LengthValidator({ min: 5, max: 100 });
+  let value;
 
+  describe("when the value to validate is of a type Array", () => {
+    beforeEach(() => {
+      value = [];
+    });
+    describe("when the value is below the minimum", () => {
+      it("should validate that the number of the destination Array value is between the minimum and the maxium", () => {
+        value = [1,2];
+        assert.equal(lengthValidator.isValid(null, value), false);
+      });
+    });
+    describe("when the value is between the minimum and the maximum", () => {
+      it("should validate that the number of the destination Array value is between the minimum and the maxium", () => {
+        value = [1,2,3,4,5];
+        assert.equal(lengthValidator.isValid(null, value), true);
+      });
+    });
+    describe("when the value is higher than the maximum", () => {
+      it("should validate that the number of the destination Array value is higher than the maximum", () => {
+        for (let i = 1; i <= 105; i++) {
+          value.push(i);
+        }
+        assert.equal(lengthValidator.isValid(null, value), false);
+      });
     });
   });
 
   describe("when the value to validate is of a type String", () => {
-    it("should validate that the length of the destination String value match with a specific size", () => {
-
+    describe("when the value is below the minimum", () => {
+      it("should validate that the size of the destination string value is between the minimum and the maxium", () => {
+        value = "ab";
+        assert.equal(lengthValidator.isValid(null, value), false);
+      });
+    });
+    describe("when the value is between the minimum and the maximum", () => {
+      it("should validate that the size of the destination string value is between the minimum and the maximum", () => {
+        value = "abcde";
+        assert.equal(lengthValidator.isValid(null, value), true);
+      });
+    });
+    describe("when the value is higher than the maximum", () => {
+      it("should validate that the size of the destination string value is higher than the maximum", () => {
+        for (let i = 1; i <= 105; i++) {
+          value += i;
+        }
+        assert.equal(lengthValidator.isValid(null, value), false);
+      });
     });
   });
 });
 
 describe("RegExpValidator", () => {
-  it("should validate that the destination value match with a specific RegExp", () => {
+  xit("should validate that the destination value match with a specific RegExp", () => {
 
   });
 });
 
 describe("RegExpValidator", () => {
-  it("should validate that the destination value is an email", () => {
+  xit("should validate that the destination value is an email", () => {
 
   });
 });
 
 describe("EmailValidator", () => {
-  it("should validate that the destination value is an email", () => {
+  xit("should validate that the destination value is an email", () => {
 
   });
 });
 
 describe("RequiredValidator", () => {
-  it("should validate that the destination value has a value", () => {
+  xit("should validate that the destination value has a value", () => {
 
   });
 });
 
 describe("AllowedValueSwitch", () => {
-  it("should validate that a value can be changed to a specific list of values", () => {
+  xit("should validate that a value can be changed to a specific list of values", () => {
 
   });
 });
