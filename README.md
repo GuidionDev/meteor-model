@@ -10,10 +10,12 @@ Implements a basic functionality to build Meteor models that hold business logic
 ##### 4. Subscribe to a Meteor publication
 ##### 5. Persist data through a Meteor endpoint
 
+
 ##### To run unit tests:
-##### tsc
 ##### cd tests
 ##### linklocal
+##### tsc -w
+Compile typescript files when they change
 ##### meteor test --driver-package=practicalmeteor:mocha
 
 ##### ill fix a shell cmd for it 2morrow

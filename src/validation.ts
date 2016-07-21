@@ -15,7 +15,7 @@ export class ValidationRule implements IValidationRule {
 
   /**
    * Retrieves the invalid message for the ValidationRule
-   */  
+   */
   get invalidMessage(): string {
     return this._invalidMessage;
   }
