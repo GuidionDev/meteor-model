@@ -1,5 +1,5 @@
 import { assert } from 'meteor/practicalmeteor:chai';
-import {ValidationRule, LengthValidator, RegExpValidator, EmailValidator, RequiredValidator, AllowedValueSwitch} from "meteor-model";
+import {ValidationRule, LengthValidator, RegExpValidator, EmailValidator, RequiredValidator, AllowedValueSwitchValidator} from "meteor-model";
 import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./fixtures/sample_validation_rule_fixture";
 
 describe("ValidationRule", () => {
@@ -107,16 +107,10 @@ describe("RegExpValidator", () => {
   });
 });
 
-describe("RegExpValidator", () => {
-  xit("should validate that the destination value is an email", () => {
-
-  });
-});
-
 describe("EmailValidator", () => {
   let emailValidator = new EmailValidator();
 
-  describe("when the value to validate has valid email values", () => {
+  describe("when the value to validate has invalid email values", () => {
     let invalidEmails = [];
     beforeEach(() => {
       invalidEmails = [undefined, null, 1, "holacomoestas", "hola@como", "hola@@comoestas.com"];
@@ -129,7 +123,7 @@ describe("EmailValidator", () => {
     });
   });
 
-  describe("when the value to validate has invalid email values", () => {
+  describe("when the value to validate has valid email values", () => {
     let validEmails = [];
     beforeEach(() => {
       validEmails = ["hola@davidvalin.com", "si@si.com"];
@@ -162,8 +156,25 @@ describe("RequiredValidator", () => {
   });
 });
 
-describe("AllowedValueSwitch", () => {
-  xit("should validate that a value can be changed to a specific list of values", () => {
+describe("AllowedValueSwitchValidator", () => {
+  let allowedValueSwitchValidator = new AllowedValueSwitchValidator({ matches: [
+        { from: "open", to: ["scheduled", "canceled", "closed"] }
+      ]
+  });
 
+  describe("when the value has made a valid switch", () => {
+    it("should be valid", () => {
+      assert.equal(allowedValueSwitchValidator.isValid("open", "scheduled"), true);
+      assert.equal(allowedValueSwitchValidator.isValid("open", "canceled"), true);
+      assert.equal(allowedValueSwitchValidator.isValid("open", "closed"), true);
+    });
+  });
+
+  describe("when the value has made an invalid switch", () => {
+    it("should be valid", () => {
+      assert.equal(allowedValueSwitchValidator.isValid(null, "scheduled"), false);
+      assert.equal(allowedValueSwitchValidator.isValid("scheduled", "open"), false);
+      assert.equal(allowedValueSwitchValidator.isValid("open", "invalid status"), false);
+    });
   });
 });

@@ -132,23 +132,33 @@ export class RequiredValidator extends ValidationRule {
   ]
 }
 
-class AllowedValueSwitch extends ValidationRule {
-  private validChanges:Array<Object> = [
+export class AllowedValueSwitchValidator extends ValidationRule {
     // Sample of value changes declaration:
-    // { from: "open", to: ["scheduled", "canceled", "closed"] }
-  ]
+    // { matches: [
+    //     { from: "open", to: ["scheduled", "canceled", "closed"] }
+    // ]}
 
   private conditions:Array<Function> = [
     () => {
       let match:Boolean = false;
 
-      for (let i = 0; i < this.validChanges.length; i++) {
-        if (this.fromValue === this.validChanges[i]['from'] && !match) {
-          for (let i2 = 0; i2 < this.validChanges[i]['to'].length; i2++) {
-            if (this.fromValue === this.validChanges[i]['to'][i2] && !match) {
-              match = true;
+      if (this.params && this.params['matches'] && this.params['matches'].length) {
+        for (let i = 0; i < this.params['matches'].length; i++) {
+          const rule = this.params['matches'][i];
+          if (rule['from'] && rule['to'] && rule['to'].length) {
+            // Origin value matched
+            if (rule['from'] === this.fromValue) {
+              // Check that the destination value also matches
+              for (let i2 = 0; i2 < rule['to'].length; i2++) {
+                if (!match) {
+                  if (this.toValue === rule['to'][i2] && !match) {
+                    match = true;
+                  }
+                }
+              }
+            } else {
+              match = false;
             }
-          }
         }
       }
 
