@@ -138,53 +138,6 @@ describe('MeteorModel', () => {
     });
   });
 
-  describe(".attr()", () => {
-    describe("when no parameters are provided", () => {
-      it("should retrieve all attributes", () => {
-        modelInstance = new MeteorModelFixture();
-        assert.deepEqual(modelInstance.attr(), {
-          id: null,
-          username: 'username-1',
-          email: 'david@guidion.com',
-          items: [{
-            name: "Item 1",
-            active: false
-          }],
-          active: false
-        });
-      });
-    });
-
-    describe("when parameters are provided", () => {
-      describe("when only the attribute name is provided", () => {
-        it("should retrieve the attribute value for the attribute name provided", () => {
-          modelInstance = new MeteorModelFixture();
-          assert.deepEqual(modelInstance.attr("items"), [{
-            name: "Item 1",
-            active: false
-          }]);
-        });
-      });
-
-      describe("when both attribute name and attribute value is provided", () => {
-        it("should set the attribute value provided for the attribute name provided", () => {
-          modelInstance = new MeteorModelFixture();
-          modelInstance.attr("items", [{ name: "A different item", active: false }]);
-          assert.deepEqual(modelInstance._attrs, {
-            id: null,
-            username: 'username-1',
-            email: 'david@guidion.com',
-            items: [{
-              name: "A different item",
-              active: false
-            }],
-            active: false
-          });
-        });
-      });
-    });
-  });
-
   describe('.removeAttr()', () => {
     it("should set to null a specific attribute", () => {
       modelInstance = new MeteorModelFixture();

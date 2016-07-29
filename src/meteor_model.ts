@@ -7,7 +7,7 @@ import {ValidationRule} from './validation';
 export class MeteorModel {
   public _id:number
   private transport = "Meteor";
-  private _attrs: Object
+  protected _attrs: Object
   private _errors: Object
   private validationRules: Object
   public static COLLECTION_NAME = null
@@ -19,12 +19,12 @@ export class MeteorModel {
     this._errors = {};
 
     // Extend with defaults first
-    _.extend(this, this.defaults());
+    _.extend(this._attrs, this.defaults());
 
     // Merge with initialization attributes too
     const initialAttributesKeys = Object.keys(initialAttributes);
     for (let i = 0; i < initialAttributesKeys.length; i++) {
-      this[initialAttributesKeys[i]] = initialAttributes[initialAttributesKeys[i]];
+      this._attrs[initialAttributesKeys[i]] = initialAttributes[initialAttributesKeys[i]];
     }
   }
 
@@ -91,7 +91,7 @@ export class MeteorModel {
     // Reset errors
     this._errors = {};
 
-    let attrNames = Object.keys(this);
+    let attrNames = Object.keys(this._attrs);
     console.log('attribute names: ', attrNames);
 
     /*
@@ -190,25 +190,7 @@ export class MeteorModel {
     // TODO: Implement
     return false;
   }
-
-  /**
-   * Retrieves or sets attributes
-   */
-  public attr(key?:string, value?:string): Object|any {
-    if (!key) {
-      // Return all attributes as an Object
-      return this._attrs;
-    } else {
-      if (typeof(value) === "undefined") {
-        // Returns a specific attribute value
-        return this._attrs[key];
-      } else {
-        // Sets a specific attribute
-        this._attrs[key] = value;
-      }
-    }
-  }
-
+  
   /**
    * Removes an attribute value from the model attributes
    */
@@ -241,14 +223,14 @@ export class MeteorModel {
     if (Meteor.isServer) {
       console.log('Running .save() in the backend');
       if (this.isNew()) {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).insert(this);
+        return Mongo.Collection.get(this['COLLECTION_NAME']).insert(this.attr());
       } else {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).update({_id: this._id}, this);
+        return Mongo.Collection.get(this['COLLECTION_NAME']).update({_id: this._id}, this.attr());
       }
     } else {
       console.log('Running .save() in the frontend');
       return new Promise((resolve, reject) => {
-        Meteor.call(this['METEOR_METHOD_RESOURCE_NAME'] + '.save', this, (error, result) => {
+        Meteor.call(this['METEOR_METHOD_RESOURCE_NAME'] + '.save', this.attr(), (error, result) => {
           if (error) {
             reject(Error(error));
           } else {
@@ -280,20 +262,6 @@ export class MeteorModel {
     }
   }
 
-
-  /**
-   * Subscribes for the resource collection using a specific query
-   */
-  public static subscribe(query: Object = {}, onReadyCallback:Function = () => {}) : void {
-    console.log('Subscribing to : ', this['COLLECTION_NAME'] + '.read_collection');
-    Meteor.subscribe(this['COLLECTION_NAME'] + '.read_collection', () => {
-      return [query];
-    }, {
-      onReady: onReadyCallback
-    });
-  }
-
-
   /**
    * Destroys an entity
    */
@@ -317,6 +285,12 @@ export class MeteorModel {
     }
   }
 
+  /**
+   * Subscribes for the resource collection using a specific query
+   */
+  public static getPublicationName(collection:boolean) : string {
+    return (this['COLLECTION_NAME'] + '.read_' +(collection ? 'collection' : 'one'));
+  }
 
   /**
    * Retrieves a collection of model instances
@@ -352,17 +326,9 @@ export class MeteorModel {
     } else {
       console.log('Running #fetchOne() in the frontend from this ID: ', id);
     }
+    console.log('found one', Mongo.Collection.get(this['COLLECTION_NAME']).findOne(id));
     let doc = Mongo.Collection.get(this['COLLECTION_NAME']).findOne(id);
-    console.log('fetching: ', doc);
-    return new this(doc);      
-  }
-
-  /**
-   * Builds a model instance from a Mongo document
-   */
-  public static buildFromMongoDoc(doc:Object) {
-    const attrs = {};
-    _.extend(attrs, doc);
-    return (new this(attrs));
+    console.log('fetching: ', new this(doc));
+    return (new this(doc));      
   }
 }
