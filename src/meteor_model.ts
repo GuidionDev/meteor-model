@@ -19,12 +19,12 @@ export class MeteorModel {
     this._errors = {};
 
     // Extend with defaults first
-    _.extend(this._attrs, this.defaults());
+    _.extend(this, this.defaults());
 
     // Merge with initialization attributes too
     const initialAttributesKeys = Object.keys(initialAttributes);
     for (let i = 0; i < initialAttributesKeys.length; i++) {
-      this._attrs[initialAttributesKeys[i]] = initialAttributes[initialAttributesKeys[i]];
+      this[initialAttributesKeys[i]] = initialAttributes[initialAttributesKeys[i]];
     }
   }
 
@@ -91,7 +91,7 @@ export class MeteorModel {
     // Reset errors
     this._errors = {};
 
-    let attrNames = Object.keys(this._attrs);
+    let attrNames = Object.keys(this);
     console.log('attribute names: ', attrNames);
 
     /*
@@ -241,14 +241,14 @@ export class MeteorModel {
     if (Meteor.isServer) {
       console.log('Running .save() in the backend');
       if (this.isNew()) {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).insert(this.attr());
+        return Mongo.Collection.get(this['COLLECTION_NAME']).insert(this);
       } else {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).update({_id: this._id}, this.attr());
+        return Mongo.Collection.get(this['COLLECTION_NAME']).update({_id: this._id}, this);
       }
     } else {
       console.log('Running .save() in the frontend');
       return new Promise((resolve, reject) => {
-        Meteor.call(this['METEOR_METHOD_RESOURCE_NAME'] + '.save', this.attr(), (error, result) => {
+        Meteor.call(this['METEOR_METHOD_RESOURCE_NAME'] + '.save', this, (error, result) => {
           if (error) {
             reject(Error(error));
           } else {
@@ -343,19 +343,18 @@ export class MeteorModel {
    * Retrieves a single MeteorModel instance
    */
   public static fetchOne(id: string) : Promise<MeteorModel>|MeteorModel {
-    const self = this;
-
+    const self = this;    
+    console.log(id);
     // In the server it will call the real Mongo.
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
       console.log('Running #fetchOne() in the backend from this id: ', id);
     } else {
-      console.log('Running #fetchOne() in the frontend from this id: ', id);
+      console.log('Running #fetchOne() in the frontend from this ID: ', id);
     }
-
-    return Mongo.Collection.get(this['COLLECTION_NAME']).findOne({_id: id}, { transform: (doc) => {
-      return this.buildFromMongoDoc(doc);
-    }});
+    let doc = Mongo.Collection.get(this['COLLECTION_NAME']).findOne(id);
+    console.log('fetching: ', doc);
+    return new this(doc);      
   }
 
   /**
@@ -363,7 +362,7 @@ export class MeteorModel {
    */
   public static buildFromMongoDoc(doc:Object) {
     const attrs = {};
-    _.extend(attrs, doc['profile']);
+    _.extend(attrs, doc);
     return (new this(attrs));
   }
 }
