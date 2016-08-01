@@ -8,6 +8,14 @@ export default class MeteorModelFixture extends MeteorModel {
 
   constructor(initialAttributes:Object) { super(initialAttributes); }
 
+  get items(){
+    return this._attrs.items;
+  }
+
+  get email(){
+    return this._attrs.email;
+  }
+
   public defaults() {
     return {
       username: 'username-1',

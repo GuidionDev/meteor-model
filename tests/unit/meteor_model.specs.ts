@@ -138,14 +138,6 @@ describe('MeteorModel', () => {
     });
   });
 
-  describe('.removeAttr()', () => {
-    it("should set to null a specific attribute", () => {
-      modelInstance = new MeteorModelFixture();
-      modelInstance.removeAttr("email");
-      assert.equal(modelInstance._attrs["email"], null);
-    });
-  });
-
   describe('.addAttrItem()', () => {
     it("should add an item to an list attribute", () => {
       modelInstance = new MeteorModelFixture();
@@ -153,7 +145,7 @@ describe('MeteorModel', () => {
         name: "A New Item",
         active: true
       });
-      assert.deepEqual(modelInstance._attrs["items"], [
+      assert.deepEqual(modelInstance.items, [
         {
           name: "Item 1",
           active: false
@@ -163,14 +155,6 @@ describe('MeteorModel', () => {
           active: true
         }
       ]);
-    });
-  });
-
-  describe('.removeAttrItem()', () => {
-    it("should remove an item in a specific index from a list attribute", () => {
-      modelInstance = new MeteorModelFixture();
-      modelInstance.removeAttrItem("items", 0);
-      assert.deepEqual(modelInstance._attrs["items"], []);
     });
   });
 

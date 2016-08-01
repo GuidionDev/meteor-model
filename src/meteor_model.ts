@@ -158,7 +158,7 @@ export class MeteorModel {
       let validationRule = this.validationRules[attributeName][i];
       console.log('checking validation rule for attr: ', attributeName);
       // Check if entity is valid and collect all validation errors if any
-      if (!validationRule.isValid(/* TODO: pass previous value */ null, this.attr(attributeName))) {
+      if (!validationRule.isValid(/* TODO: pass previous value */ null, this._attrs[attributeName])) {
         // Add the validator message to the MeteorModel
         this.addValidationError(attributeName, validationRule._invalidMessage);
         matchAllValidations = false;
@@ -192,18 +192,10 @@ export class MeteorModel {
   }
   
   /**
-   * Removes an attribute value from the model attributes
-   */
-  public removeAttr(key:string, sync:boolean = false) : void {
-    this.attr(key, null);
-    if (sync) { this.save(); }
-  }
-
-  /**
    * Adds an item to an attribute list and saves it if specified
    */
   public addAttrItem(collectionAttrName:string, attrValue:any, sync:boolean = false) : void {
-    this['_attrs'][collectionAttrName].push(attrValue);
+    this._attrs[collectionAttrName].push(attrValue);
     if (sync) { this.save(); }
   }
 
@@ -211,7 +203,7 @@ export class MeteorModel {
    * Removes an item from the attribute list
    */
   public removeAttrItem(attrCollectionName:string, index:number, sync:boolean = false) : void {
-    this['_attrs'][attrCollectionName].splice(index, 1);
+    this._attrs[attrCollectionName].splice(index, 1);
     if (sync) { this.save(); }
   }
 
@@ -223,14 +215,14 @@ export class MeteorModel {
     if (Meteor.isServer) {
       console.log('Running .save() in the backend');
       if (this.isNew()) {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).insert(this.attr());
+        return Mongo.Collection.get(this['COLLECTION_NAME']).insert(this._attrs);
       } else {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).update({_id: this._id}, this.attr());
+        return Mongo.Collection.get(this['COLLECTION_NAME']).update({_id: this._id}, this._attrs);
       }
     } else {
       console.log('Running .save() in the frontend');
       return new Promise((resolve, reject) => {
-        Meteor.call(this['METEOR_METHOD_RESOURCE_NAME'] + '.save', this.attr(), (error, result) => {
+        Meteor.call(this['METEOR_METHOD_RESOURCE_NAME'] + '.save', this._attrs, (error, result) => {
           if (error) {
             reject(Error(error));
           } else {
@@ -308,7 +300,7 @@ export class MeteorModel {
       console.log('Running #fetchIndex() in the frontend with this query: ', query);
       // However, in the frontend we return an instance of the model containing the data and its methods
       return Mongo.Collection.get(this['COLLECTION_NAME']).find(query, { transform: (doc) => {
-        return this.buildFromMongoDoc(doc);
+        return (new this(doc));
       }});
     }
   }
