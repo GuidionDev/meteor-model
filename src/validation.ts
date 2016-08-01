@@ -2,7 +2,7 @@
  * Represents a validation rule
  */
 export class ValidationRule implements IValidationRule {
-  private conditions: Array<Function> = [];
+  protected conditions: Array<Function> = [];
   public fromValue:any;
   public toValue:any
   public params:Object
@@ -64,7 +64,7 @@ export interface IValidationRule {
  */
 interface LengthValidatorParams { min: Object, max: integer }
 export class LengthValidator extends ValidationRule {
-  private conditions:Array<Function> = [
+  protected conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
 
@@ -86,7 +86,7 @@ export class LengthValidator extends ValidationRule {
  * RegExpValidator
  */
 export class RegExpValidator extends ValidationRule {
-  private conditions:Array<Function> = [
+  protected conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
       if (!this.toValue || !this.toValue.match || !this.toValue.match(this.params['rule'])) {
@@ -101,7 +101,7 @@ export class RegExpValidator extends ValidationRule {
  * EmailValidator
  */
 export class EmailValidator extends ValidationRule {
-  private conditions:Array<Function> = [
+  protected conditions:Array<Function> = [
     // Check for email regexp...
     () => {
       let match:Boolean = true;
@@ -120,7 +120,7 @@ export class EmailValidator extends ValidationRule {
  * RequiredValidator
  */
 export class RequiredValidator extends ValidationRule {
-  private conditions:Array<Function> = [
+  protected conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
       if (typeof(this.toValue) === "undefined") {
@@ -138,7 +138,7 @@ export class AllowedValueSwitchValidator extends ValidationRule {
     //     { from: "open", to: ["scheduled", "canceled", "closed"] }
     // ]}
 
-  private conditions:Array<Function> = [
+  protected conditions:Array<Function> = [
     () => {
       let match:Boolean = false;
 
@@ -159,9 +159,9 @@ export class AllowedValueSwitchValidator extends ValidationRule {
             } else {
               match = false;
             }
+          }
         }
       }
-
       if (!match) {
         this.addInvalidMessage(this.fromValue + " cannot change to '" + this.toValue + "'");
       }
