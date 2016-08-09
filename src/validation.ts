@@ -51,7 +51,7 @@ export class ValidationRule implements IValidationRule {
  */
 export interface IValidationRule {
   params: any;
-  conditions: Array<Function|any>;
+  // conditions: Array<Function|any>;
   invalidMessage: String;
 
   validate();
@@ -62,7 +62,7 @@ export interface IValidationRule {
 /**
  * LengthValidator
  */
-interface LengthValidatorParams { min: Object, max: integer }
+interface LengthValidatorParams { min: number, max: number }
 export class LengthValidator extends ValidationRule {
   protected conditions:Array<Function> = [
     () => {

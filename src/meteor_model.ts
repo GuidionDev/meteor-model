@@ -5,17 +5,16 @@ import {ValidationRule} from './validation';
  * It works in the server and in the browser.
  */
 export class MeteorModel {
-  public _id:number
   private transport = "Meteor";
   protected _attrs: Object
   private _errors: Object
   private validationRules: Object
-  public static COLLECTION_NAME = null
-  public static METEOR_METHOD_RESOURCE_NAME = null
+  public static COLLECTION_NAME = 'default'
+  //public static METEOR_METHOD_RESOURCE_NAME = null
 
   constructor(initialAttributes:Object = {}) {
 
-    this._attrs = { id: null };
+    this._attrs = {};
     this._errors = {};
 
     // Extend with defaults first
@@ -31,6 +30,10 @@ export class MeteorModel {
   get errors() { return this._errors; }
   public getAttrErrors(attributeName:string) {
     return (this._errors[attributeName] ? this._errors[attributeName] : []);
+  }
+
+  get id(){
+    return this._attrs._id;
   }
 
   /**
@@ -67,7 +70,7 @@ export class MeteorModel {
    * Checks wether the MeteorModel instance is a new record
    */
   public isNew() {
-    return (!this._id);
+    return (!this.id);
   }
 
   /**
@@ -153,7 +156,6 @@ export class MeteorModel {
    */
   public validateAttr(attributeName:string) {
     let matchAllValidations = true;
-
     for (let i = 0; i < this.validationRules[attributeName].length; i++) {
       let validationRule = this.validationRules[attributeName][i];
       console.log('checking validation rule for attr: ', attributeName);
@@ -213,17 +215,18 @@ export class MeteorModel {
   public save() : Promise<MeteorModel>|MeteorModel {
     this.beforeSave();
     if (Meteor.isServer) {
-      console.log('Running .save() in the backend');
+      console.log('Running .save() in the backend', this._attrs);
       if (this.isNew()) {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).insert(this._attrs);
+        return Mongo.Collection.get(this.constructor['COLLECTION_NAME']).insert(this._attrs);
       } else {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).update({_id: this._id}, this._attrs);
+        return Mongo.Collection.get(this.constructor['COLLECTION_NAME']).update({_id: this.id}, this._attrs);
       }
     } else {
-      console.log('Running .save() in the frontend');
+      console.log('Running .save() in the frontend', this.constructor['COLLECTION_NAME']);
       return new Promise((resolve, reject) => {
-        Meteor.call(this['METEOR_METHOD_RESOURCE_NAME'] + '.save', this._attrs, (error, result) => {
+        Meteor.call(this.constructor['COLLECTION_NAME'] + '.save', this._attrs, (error, result) => {
           if (error) {
+            console.log(error);
             reject(Error(error));
           } else {
             this.afterSave();
@@ -242,7 +245,7 @@ export class MeteorModel {
     if (Meteor.isClient) {
       console.log("Running .fetch() in the client");
       if (Meteor.isServer) {
-        return Mongo.Collection.get(this['COLLECTION_NAME']).find({_id: this._id}, (err, cursor) => {
+        return Mongo.Collection.get(this.constructor['COLLECTION_NAME']).find({_id: this.id}, (err, cursor) => {
           if (!err && cursor) {
             console.log('cursor: ', cursor);
             this._attrs = cursor;
@@ -261,11 +264,11 @@ export class MeteorModel {
     this.beforeDestroy();
     if (Meteor.isServer) {
       console.log('Running .destroy() in the backend');
-      return Mongo.Collection.get(this['COLLECTION_NAME']).remove({ _id: this._id });
+      return Mongo.Collection.get(this.constructor['COLLECTION_NAME']).remove({ _id: this.id });
     } else {
       return new Promise((resolve, reject) => {
         console.log('Running .destroy() in the frontend');
-        Meteor.call(this['COLLECTION_NAME'] + '.remove', this, (error, result) => {
+        Meteor.call(this.constructor['COLLECTION_NAME'] + '.remove', this, (error, result) => {
           if (error) {
             reject(Error(error));
           } else {
@@ -287,21 +290,22 @@ export class MeteorModel {
   /**
    * Retrieves a collection of model instances
    */
-  public static fetchIndex(query: Object = {}) : Promise<Array<MeteorModel>>|Array<MeteorModel> {
+  public static fetchIndex(query: Object = {}, options: Object = {}) : Promise<Array<MeteorModel>>|Array<MeteorModel> {
     let self = this;
-
+    options.transform = (doc) => {
+        return (new this(doc));
+    }
     // In the server it will call the real Mongo.
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
-      console.log('Running #fetchIndex() in the backend with this query: ', query);
+      console.log('Running #fetchIndex() in the backend with this query: ', query, options);
       // In the backend we return data only
-      return Mongo.Collection.get(this['COLLECTION_NAME']).find(query);
+      return Mongo.Collection.get(this['COLLECTION_NAME']).find(query, options);
     } else {
       console.log('Running #fetchIndex() in the frontend with this query: ', query);
+      console.log('collection: ', Mongo.Collection.get(this['COLLECTION_NAME']).find(query, options).fetch());
       // However, in the frontend we return an instance of the model containing the data and its methods
-      return Mongo.Collection.get(this['COLLECTION_NAME']).find(query, { transform: (doc) => {
-        return (new this(doc));
-      }});
+      return Mongo.Collection.get(this['COLLECTION_NAME']).find(query, options);
     }
   }
 
@@ -309,8 +313,7 @@ export class MeteorModel {
    * Retrieves a single MeteorModel instance
    */
   public static fetchOne(id: string) : Promise<MeteorModel>|MeteorModel {
-    const self = this;    
-    console.log(id);
+    const self = this;   
     // In the server it will call the real Mongo.
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
