@@ -303,7 +303,6 @@ export class MeteorModel {
       return Mongo.Collection.get(this['COLLECTION_NAME']).find(query, options);
     } else {
       console.log('Running #fetchIndex() in the frontend with this query: ', query);
-      console.log('collection: ', Mongo.Collection.get(this['COLLECTION_NAME']).find(query, options).fetch());
       // However, in the frontend we return an instance of the model containing the data and its methods
       return Mongo.Collection.get(this['COLLECTION_NAME']).find(query, options);
     }
@@ -321,9 +320,7 @@ export class MeteorModel {
     } else {
       console.log('Running #fetchOne() in the frontend from this ID: ', id);
     }
-    console.log('found one', Mongo.Collection.get(this['COLLECTION_NAME']).findOne(id));
     let doc = Mongo.Collection.get(this['COLLECTION_NAME']).findOne(id);
-    console.log('fetching: ', new this(doc));
     return (new this(doc));      
   }
 }
