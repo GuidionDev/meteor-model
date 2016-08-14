@@ -1,4 +1,3 @@
-"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -46,7 +45,7 @@ var ValidationRule = (function () {
         this._invalidMessage += message;
     };
     return ValidationRule;
-}());
+})();
 exports.ValidationRule = ValidationRule;
 var LengthValidator = (function (_super) {
     __extends(LengthValidator, _super);
@@ -69,7 +68,7 @@ var LengthValidator = (function (_super) {
         ];
     }
     return LengthValidator;
-}(ValidationRule));
+})(ValidationRule);
 exports.LengthValidator = LengthValidator;
 /**
  * RegExpValidator
@@ -90,7 +89,7 @@ var RegExpValidator = (function (_super) {
         ];
     }
     return RegExpValidator;
-}(ValidationRule));
+})(ValidationRule);
 exports.RegExpValidator = RegExpValidator;
 /**
  * EmailValidator
@@ -101,6 +100,7 @@ var EmailValidator = (function (_super) {
         var _this = this;
         _super.apply(this, arguments);
         this.conditions = [
+            // Check for email regexp...
             // Check for email regexp...
             function () {
                 var match = true;
@@ -114,7 +114,7 @@ var EmailValidator = (function (_super) {
         ];
     }
     return EmailValidator;
-}(ValidationRule));
+})(ValidationRule);
 exports.EmailValidator = EmailValidator;
 /**
  * RequiredValidator
@@ -136,7 +136,7 @@ var RequiredValidator = (function (_super) {
         ];
     }
     return RequiredValidator;
-}(ValidationRule));
+})(ValidationRule);
 exports.RequiredValidator = RequiredValidator;
 var AllowedValueSwitchValidator = (function (_super) {
     __extends(AllowedValueSwitchValidator, _super);
@@ -179,5 +179,5 @@ var AllowedValueSwitchValidator = (function (_super) {
         ];
     }
     return AllowedValueSwitchValidator;
-}(ValidationRule));
+})(ValidationRule);
 exports.AllowedValueSwitchValidator = AllowedValueSwitchValidator;
