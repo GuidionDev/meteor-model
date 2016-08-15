@@ -9,10 +9,8 @@ services:
 install: 
   - curl https://install.meteor.com | /bin/sh
   - npm install
-  - npm install -g linklocal
 
 script:
-  - tsc -v
   - tsc
   - npm link
   - cd tests
