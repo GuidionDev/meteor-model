@@ -11,11 +11,7 @@ install:
   - npm install
 
 script:
-  - tsc
-  - npm link
-  - cd tests
-  - npm link @gdn/meteor-model
-  - meteor test --once --driver-package dispatch:mocha-phantomjs
+  - npm run-script citest
 
 notifications:
   hipchat: 350c0f8852134fb4a86bb2d9845634@2038546

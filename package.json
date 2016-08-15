@@ -4,9 +4,9 @@
   "description": "Implements a basic functionality to build Meteor models that hold business logic, validation and data persistance.",
   "main": "dist/main.js",
   "scripts": {
-    "build": "npm run build-only",
-    "build-only": "tsc || echo not ok",
-    "test": "npm run build && npm link && cd tests && npm link @gdn/meteor-model && meteor test --driver-package=practicalmeteor:mocha"
+    "build": "tsc || echo not ok && npm link && cd tests && npm link @gdn/meteor-model",
+	"test": "npm run build && cd tests && meteor test --driver-package=practicalmeteor:mocha",
+    "citest": "npm run build && cd tests && meteor test --once --driver-package dispatch:mocha-phantomjs"
   },
   "author": "Guidion B.V.",
   "license": "UNLICENSED",

@@ -1,5 +1,6 @@
 import { assert } from 'meteor/practicalmeteor:chai';
-import {ValidationRule, LengthValidator, RegExpValidator, EmailValidator, RequiredValidator, AllowedValueSwitchValidator} from "meteor-model";
+import {ValidationRule, LengthValidator, RegExpValidator,
+   EmailValidator, RequiredValidator, AllowedValueSwitchValidator} from "@gdn/meteor-model";
 import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./fixtures/sample_validation_rule_fixture";
 
 describe("ValidationRule", () => {
