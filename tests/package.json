@@ -6,7 +6,7 @@
   },
   "dependencies": {
     "meteor-node-stubs": "~0.2.0",
-    "meteor-model": "file:.."
+    "@gdn/meteor-model": "file:.."
   },
   "devDependencies": {
     "linklocal": "^2.6.0"

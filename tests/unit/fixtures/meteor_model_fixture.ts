@@ -1,4 +1,4 @@
-import {MeteorModel, ValidationRule} from "meteor-model";
+import {MeteorModel, ValidationRule} from "@gdn/meteor-model";
 import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./sample_validation_rule_fixture";
 
 /// <reference path="meteor-model.d.ts" />

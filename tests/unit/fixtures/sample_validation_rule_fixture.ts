@@ -1,4 +1,4 @@
-import {ValidationRule} from "meteor-model";
+import {ValidationRule} from "@gdn/meteor-model";
 
 export class SampleValidationRuleFixture extends ValidationRule {
   private conditions:Array<Function> = [

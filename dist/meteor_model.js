@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Implements a base class on top of we implement our models.
  * It works in the server and in the browser.
@@ -137,7 +138,7 @@ var MeteorModel = (function () {
             var validationRule = this.validationRules[attributeName][i];
             console.log('checking validation rule for attr: ', attributeName);
             // Check if entity is valid and collect all validation errors if any
-            if (!validationRule.isValid(null, this._attrs[attributeName])) {
+            if (!validationRule.isValid(/* TODO: pass previous value */ null, this._attrs[attributeName])) {
                 // Add the validator message to the MeteorModel
                 this.addValidationError(attributeName, validationRule._invalidMessage);
                 matchAllValidations = false;
@@ -308,5 +309,5 @@ var MeteorModel = (function () {
     };
     MeteorModel.COLLECTION_NAME = 'default';
     return MeteorModel;
-})();
+}());
 exports.MeteorModel = MeteorModel;

@@ -610,7 +610,7 @@ declare module DDP {
 
   function _allSubscriptionsReady(): boolean;
 
-  type Status = 'connected' | 'connecting' | 'failed' | 'waiting' | 'offline';
+  let Status = 'connected' | 'connecting' | 'failed' | 'waiting' | 'offline';
 
   interface DDPStatus {
     connected: boolean;
@@ -650,7 +650,7 @@ declare module "meteor/ddp" {
 
     function _allSubscriptionsReady(): boolean;
 
-    type Status = 'connected' | 'connecting' | 'failed' | 'waiting' | 'offline';
+    let Status = 'connected' | 'connecting' | 'failed' | 'waiting' | 'offline';
 
     interface DDPStatus {
       connected: boolean;
