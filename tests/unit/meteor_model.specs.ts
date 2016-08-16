@@ -40,7 +40,6 @@ describe('MeteorModel', () => {
       });
 
       assert.deepEqual(modelInstance._attrs, {
-        id: null,
         username: 'username-10001',
         email: 'david@guidion.com',
         items: [{
@@ -57,7 +56,7 @@ describe('MeteorModel', () => {
     it("should check wether the record is a new a record not persisted to the database", () => {
       modelInstance = new MeteorModelFixture();
       assert.equal(modelInstance.isNew(), true);
-      modelInstance._id = 1001;
+      modelInstance._attrs._id = 1001;
       assert.equal(modelInstance.isNew(), false);
     });
   });

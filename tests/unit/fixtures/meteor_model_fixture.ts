@@ -8,10 +8,6 @@ export default class MeteorModelFixture extends MeteorModel {
 
   constructor(initialAttributes:Object) { super(initialAttributes); }
 
-  get id(){
-    return this._attrs._id;
-  }
-
   get items(){
     return this._attrs.items;
   }
