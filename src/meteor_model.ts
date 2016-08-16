@@ -9,7 +9,7 @@ export class MeteorModel {
   protected _attrs: Object
   private _errors: Object
   private validationRules: Object
-  public static COLLECTION = undefined  
+  public static COLLECTION = undefined
   public static COLLECTION_NAME = 'default'
   //public static METEOR_METHOD_RESOURCE_NAME = null
 
@@ -130,6 +130,7 @@ export class MeteorModel {
 
     console.log('I have this validation rules: ', this.validationRules);
 
+    // Validate every ValidationRule in every attribute
     for (let i = 0; i < attrNames.length; i++) {
       if (this.validationRules[attrNames[i]]) {
         if (!this.validateAttr(attrNames[i])) {
@@ -138,7 +139,14 @@ export class MeteorModel {
       }
     }
 
-    console.log('errors after validation: ', this._errors);
+    // Validate all custom ValidationRules
+    if (this.validationRules['_base'] && this.validationRules['_base'].length > 0) {
+      for (let i = 0; i < this.validationRules['_base'].length; i++) {
+        if (!this.validationRules['_base'][i]()) {
+          matchAllValidations = false;
+        }
+      }
+    }
 
     this.afterValidation();
     return matchAllValidations;
@@ -193,7 +201,7 @@ export class MeteorModel {
     // TODO: Implement
     return false;
   }
-  
+
   /**
    * Adds an item to an attribute list and saves it if specified
    */
@@ -313,7 +321,7 @@ export class MeteorModel {
    * Retrieves a single MeteorModel instance
    */
   public static fetchOne(id: string) : Promise<MeteorModel>|MeteorModel {
-    const self = this;   
+    const self = this;
     // In the server it will call the real Mongo.
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
@@ -322,6 +330,6 @@ export class MeteorModel {
       console.log('Running #fetchOne() in the frontend from this ID: ', id);
     }
     let doc = this.constructor['COLLECTION'].findOne(id);
-    return (new this(doc));      
+    return (new this(doc));
   }
 }

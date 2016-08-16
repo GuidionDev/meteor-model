@@ -29,6 +29,10 @@ export default class MeteorModelFixture extends MeteorModel {
   }
 
   private validationRules = {
+    '_base':    [
+      () => { return true; },
+      () => { this.addValidationError('_base', "It's not valid"); return false; }
+    ],
     'username': [new SampleValidationRuleFixture(), new SampleValidationRuleFixture2()],
     'email':    [new SampleValidationRuleFixture()],
     'items':    [new SampleValidationRuleFixture2()],

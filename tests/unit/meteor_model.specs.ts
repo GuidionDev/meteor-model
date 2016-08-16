@@ -50,6 +50,10 @@ describe('MeteorModel', () => {
       });
 
     });
+
+    it("should have empty _errors", () => {
+      assert.deepEqual(modelInstance._errors, {});
+    });
   });
 
   describe('.isNew()', () => {
@@ -69,14 +73,16 @@ describe('MeteorModel', () => {
   });
 
   describe(".validate()", () => {
-    it("should validate all the ValidationRules for every attribute and build a list of errors for every invalid attribute", () => {
+    beforeEach(() => {
       modelInstance = new MeteorModelFixture();
+    });
 
-      assert.deepEqual(modelInstance._errors, {});
+    it("should validate all the ValidationRules for every attribute and the global validators and build a list of errors", () => {
       modelInstance.validate();
       assert.deepEqual(modelInstance._errors, {
         username:  ["Invalid message"],
-        items: ["Invalid message"]
+        items: ["Invalid message"],
+        '_base': ["It's not valid"]
       });
     });
   });
@@ -132,7 +138,7 @@ describe('MeteorModel', () => {
 
   describe('.hasAttrChanged()', () => {
     it("it should check wether a specific attribute on a record has been changed since the last sync", () => {
-      
+
     });
   });
 
