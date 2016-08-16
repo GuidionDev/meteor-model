@@ -246,6 +246,14 @@ export class MeteorModel {
     }
   }
 
+  /**
+   * Returns
+   */
+  public toString() {
+    let finalAttrs = this['_attrs']; finalAttrs['_id'] = this['_id'];
+    return finalAttrs;
+  }
+
 
   /**
    * It fetches de data from the server
