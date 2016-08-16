@@ -9,7 +9,7 @@ export class MeteorModel {
   protected _attrs: Object
   private _errors: Object
   private validationRules: Object
-  public static COLLECTION = undefined
+  public static COLLECTION = {}
   public static COLLECTION_NAME = 'default'
   //public static METEOR_METHOD_RESOURCE_NAME = null
 
@@ -309,11 +309,11 @@ export class MeteorModel {
     if (Meteor.isServer) {
       console.log('Running #fetchIndex() in the backend with this query: ', query, options);
       // In the backend we return data only
-      return this.constructor['COLLECTION'].find(query, options);
+      return this['COLLECTION'].find(query, options);
     } else {
       console.log('Running #fetchIndex() in the frontend with this query: ', query);
       // However, in the frontend we return an instance of the model containing the data and its methods
-      return this.constructor['COLLECTION'].find(query, options);
+      return this['COLLECTION'].find(query, options);
     }
   }
 
@@ -329,7 +329,7 @@ export class MeteorModel {
     } else {
       console.log('Running #fetchOne() in the frontend from this ID: ', id);
     }
-    let doc = this.constructor['COLLECTION'].findOne(id);
+    let doc = this['COLLECTION'].findOne(id);
     return (new this(doc));
   }
 }
