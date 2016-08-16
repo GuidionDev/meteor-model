@@ -9,6 +9,7 @@ export class MeteorModel {
   protected _attrs: Object
   private _errors: Object
   private validationRules: Object
+  public static COLLECTION = undefined  
   public static COLLECTION_NAME = 'default'
   //public static METEOR_METHOD_RESOURCE_NAME = null
 
@@ -217,9 +218,9 @@ export class MeteorModel {
     if (Meteor.isServer) {
       console.log('Running .save() in the backend', this._attrs);
       if (this.isNew()) {
-        return Mongo.Collection.get(this.constructor['COLLECTION_NAME']).insert(this._attrs);
+        return this.constructor['COLLECTION'].insert(this._attrs);
       } else {
-        return Mongo.Collection.get(this.constructor['COLLECTION_NAME']).update({_id: this.id}, this._attrs);
+        return this.constructor['COLLECTION'].update({_id: this.id}, this._attrs);
       }
     } else {
       console.log('Running .save() in the frontend', this.constructor['COLLECTION_NAME']);
@@ -245,7 +246,7 @@ export class MeteorModel {
     if (Meteor.isClient) {
       console.log("Running .fetch() in the client");
       if (Meteor.isServer) {
-        return Mongo.Collection.get(this.constructor['COLLECTION_NAME']).find({_id: this.id}, (err, cursor) => {
+        return this.constructor['COLLECTION'].find({_id: this.id}, (err, cursor) => {
           if (!err && cursor) {
             console.log('cursor: ', cursor);
             this._attrs = cursor;
@@ -264,7 +265,7 @@ export class MeteorModel {
     this.beforeDestroy();
     if (Meteor.isServer) {
       console.log('Running .destroy() in the backend');
-      return Mongo.Collection.get(this.constructor['COLLECTION_NAME']).remove({ _id: this.id });
+      return this.constructor['COLLECTION'].remove({ _id: this.id });
     } else {
       return new Promise((resolve, reject) => {
         console.log('Running .destroy() in the frontend');
@@ -300,11 +301,11 @@ export class MeteorModel {
     if (Meteor.isServer) {
       console.log('Running #fetchIndex() in the backend with this query: ', query, options);
       // In the backend we return data only
-      return Mongo.Collection.get(this['COLLECTION_NAME']).find(query, options);
+      return this.constructor['COLLECTION'].find(query, options);
     } else {
       console.log('Running #fetchIndex() in the frontend with this query: ', query);
       // However, in the frontend we return an instance of the model containing the data and its methods
-      return Mongo.Collection.get(this['COLLECTION_NAME']).find(query, options);
+      return this.constructor['COLLECTION'].find(query, options);
     }
   }
 
@@ -320,7 +321,7 @@ export class MeteorModel {
     } else {
       console.log('Running #fetchOne() in the frontend from this ID: ', id);
     }
-    let doc = Mongo.Collection.get(this['COLLECTION_NAME']).findOne(id);
+    let doc = this.constructor['COLLECTION'].findOne(id);
     return (new this(doc));      
   }
 }
