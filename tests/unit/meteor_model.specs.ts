@@ -7,7 +7,7 @@ let modelInstance;
 
 describe('MeteorModel', () => {
   describe(".constructor()", () => {
-    xit("should set initial attributes containing a null id attribute?", (done) => {
+    it("should set initial attributes containing a null id attribute?", (done) => {
       modelInstance = new MeteorModelFixture();
 
       assert.isDefined(modelInstance.id);
@@ -20,6 +20,7 @@ describe('MeteorModel', () => {
 
       assert.isDefined(modelInstance._attrs);
       assert.deepEqual(modelInstance._attrs, {
+        _id: null,
         username: 'username-1',
         email: 'david@guidion.com',
         items: [{
@@ -40,6 +41,7 @@ describe('MeteorModel', () => {
       });
 
       assert.deepEqual(modelInstance._attrs, {
+        _id: null,
         username: 'username-10001',
         email: 'david@guidion.com',
         items: [{
@@ -48,7 +50,27 @@ describe('MeteorModel', () => {
         }],
         active: false
       });
+    });
 
+    it("should set the previous attributes", () => {
+      modelInstance = new MeteorModelFixture({
+        username: 'username-10001',
+        items: [{
+          name: "A different Item",
+          active: true
+        }],
+      });
+
+      assert.deepEqual(modelInstance._prevAttrs, {
+        _id: null,
+        username: 'username-10001',
+        email: 'david@guidion.com',
+        items: [{
+          name: "A different Item",
+          active: true
+        }],
+        active: false
+      });
     });
 
     it("should have empty _errors", () => {
@@ -131,14 +153,21 @@ describe('MeteorModel', () => {
   });
 
   describe('.hasChanged()', () => {
-    xit("it should check wether the record has been changed since the last sync", () => {
-
+    it("it should check wether the record has been changed since the last sync or from instantiation", () => {
+      modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+      assert.equal(modelInstance.hasChanged(), false);
+      modelInstance._attrs = { id: null, name: "Chuck Norris" };
+      modelInstance._prevAttrs = { id: null };
+      assert.equal(modelInstance.hasChanged(), true);
     });
   });
 
   describe('.hasAttrChanged()', () => {
-    xit("it should check wether a specific attribute on a record has been changed since the last sync", () => {
-
+    it("it should check wether a specific attribute on a record has been changed since the last sync or from instantiation", () => {
+      modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+      assert.equal(modelInstance.hasAttrChanged('name'), false);
+      modelInstance._attrs['name'] = 'My New Name';
+      assert.equal(modelInstance.hasAttrChanged('name'), true);
     });
   });
 

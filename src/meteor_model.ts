@@ -7,6 +7,7 @@ import {ValidationRule} from './validation';
 export class MeteorModel {
   private transport = "Meteor";
   protected _attrs: Object
+  protected _prevAttrs: Object
   private _errors: Object
   private validationRules: Object
   public static COLLECTION = {}
@@ -16,7 +17,11 @@ export class MeteorModel {
   constructor(initialAttributes:Object = {}) {
 
     this._attrs = {};
+    this._prevAttrs = {};
     this._errors = {};
+
+    // Set a null id
+    this['_attrs']['_id'] = this['_prevAttrs']['_id'] = null;
 
     // Extend with defaults first
     _.extend(this._attrs, this.defaults());
@@ -26,6 +31,9 @@ export class MeteorModel {
     for (let i = 0; i < initialAttributesKeys.length; i++) {
       this._attrs[initialAttributesKeys[i]] = initialAttributes[initialAttributesKeys[i]];
     }
+
+    // On initialization, the prev attributes are the initial attributes
+    Object.assign(this._prevAttrs, this._attrs);
   }
 
   get errors() { return this._errors; }
@@ -190,7 +198,20 @@ export class MeteorModel {
    * Checks wether the model has attributes changed since the last sync
    */
   public hasChanged():boolean {
-    // TODO: Implement
+    let attrName, prevAttrName,
+        attrNames = Object.keys(this._attrs),
+        prevAttrNames = Object.keys(this._prevAttrs);
+
+    if (attrNames.length !== prevAttrNames.length) {
+      return true;
+    }
+
+    for (prevAttrName of prevAttrNames) {
+      if (this._prevAttrs[prevAttrName] !== this._attrs[prevAttrName]) {
+        return true;
+      }
+    }
+
     return false;
   }
 
@@ -198,8 +219,7 @@ export class MeteorModel {
    * Checks wether a model attribute has changed since the last sync
    */
   public hasAttrChanged(attrName:string):boolean {
-    // TODO: Implement
-    return false;
+    return (this._attrs[attrName] !== this._prevAttrs[attrName]);
   }
 
   /**
