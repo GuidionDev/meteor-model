@@ -131,13 +131,13 @@ describe('MeteorModel', () => {
   });
 
   describe('.hasChanged()', () => {
-    it("it should check wether the record has been changed since the last sync", () => {
+    xit("it should check wether the record has been changed since the last sync", () => {
 
     });
   });
 
   describe('.hasAttrChanged()', () => {
-    it("it should check wether a specific attribute on a record has been changed since the last sync", () => {
+    xit("it should check wether a specific attribute on a record has been changed since the last sync", () => {
 
     });
   });
