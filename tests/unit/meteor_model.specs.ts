@@ -171,26 +171,6 @@ describe('MeteorModel', () => {
     });
   });
 
-  describe('.addAttrItem()', () => {
-    it("should add an item to an list attribute", () => {
-      modelInstance = new MeteorModelFixture();
-      modelInstance.addAttrItem("items", {
-        name: "A New Item",
-        active: true
-      });
-      assert.deepEqual(modelInstance.items, [
-        {
-          name: "Item 1",
-          active: false
-        },
-        {
-          name: "A New Item",
-          active: true
-        }
-      ]);
-    });
-  });
-
   describe(".save()", () => {
     xit("should call the right Meteor method", () => {
 
