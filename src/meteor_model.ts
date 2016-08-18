@@ -12,7 +12,6 @@ export class MeteorModel {
   private validationRules: Object
   public static COLLECTION = {}
   public static COLLECTION_NAME = 'default'
-  //public static METEOR_METHOD_RESOURCE_NAME = null
 
   constructor(initialAttributes:Object = {}) {
 
@@ -105,34 +104,6 @@ export class MeteorModel {
 
     let attrNames = Object.keys(this._attrs);
     console.log('attribute names: ', attrNames);
-
-    /*
-      Model attributes:
-      _attrs: {
-        email: '',
-        age: 0
-      }
-
-      Model validation rules:
-      validationRules: {
-        email: [
-          new RequiredValidator,
-          new LengthValidator({ min: 1, max: 100 })
-        ],
-        age: [
-          new RequiredValidator
-        ]
-      }
-
-      // Errors after validation
-      _errors: {
-        email: [
-          '"" is required',
-          '"" is not a valid email'
-        ],
-        age: ['required']
-      }
-    */
 
     let matchAllValidations = true;
 
@@ -274,26 +245,6 @@ export class MeteorModel {
     return finalAttrs;
   }
 
-
-  /**
-   * It fetches de data from the server
-   */
-  public fetch() : Promise<MeteorModel>|MeteorModel {
-    if (Meteor.isClient) {
-      console.log("Running .fetch() in the client");
-      if (Meteor.isServer) {
-        return this.constructor['COLLECTION'].find({_id: this.id}, (err, cursor) => {
-          if (!err && cursor) {
-            console.log('cursor: ', cursor);
-            this._attrs = cursor;
-          }
-        });
-      } else {
-
-      }
-    }
-  }
-
   /**
    * Destroys an entity
    */
@@ -325,9 +276,9 @@ export class MeteorModel {
   }
 
   /**
-   * Retrieves a collection of model instances
+   * Retrieves a cursor to a collection of model instances
    */
-  public static fetchIndex(query: Object = {}, options: Object = {}) : Promise<Array<MeteorModel>>|Array<MeteorModel> {
+  public static fetchCursor(query: Object = {}, options: Object = {}) : Promise<Array<MeteorModel>>|Array<MeteorModel> {
     let self = this;
     options.transform = (doc) => {
         return (new this(doc));
@@ -335,12 +286,10 @@ export class MeteorModel {
     // In the server it will call the real Mongo.
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
-      console.log('Running #fetchIndex() in the backend with this query: ', query, options);
-      // In the backend we return data only
+      console.log('Running #fetchCursor() in the backend with this query: ', query, options);
       return this['COLLECTION'].find(query, options);
     } else {
-      console.log('Running #fetchIndex() in the frontend with this query: ', query);
-      // However, in the frontend we return an instance of the model containing the data and its methods
+      console.log('Running #fetchCursor() in the frontend with this query: ', query);
       return this['COLLECTION'].find(query, options);
     }
   }

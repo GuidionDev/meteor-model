@@ -227,7 +227,7 @@ describe('MeteorModel', () => {
     });
   });
 
-  describe("#fetchIndex()", () => {
+  describe("#fetchCursor()", () => {
     xit("should return a Promise", () => {
 
     });
