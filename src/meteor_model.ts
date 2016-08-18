@@ -194,22 +194,6 @@ export class MeteorModel {
   }
 
   /**
-   * Adds an item to an attribute list and saves it if specified
-   */
-  public addAttrItem(collectionAttrName:string, attrValue:any, sync:boolean = false) : void {
-    this._attrs[collectionAttrName].push(attrValue);
-    if (sync) { this.save(); }
-  }
-
-  /**
-   * Removes an item from the attribute list
-   */
-  public removeAttrItem(attrCollectionName:string, index:number, sync:boolean = false) : void {
-    this._attrs[attrCollectionName].splice(index, 1);
-    if (sync) { this.save(); }
-  }
-
-  /**
    * Saves the model entity
    */
   public save() : Promise<MeteorModel>|MeteorModel {
@@ -272,7 +256,7 @@ export class MeteorModel {
    * Subscribes for the resource collection using a specific query
    */
   public static getPublicationName(collection:boolean) : string {
-    return (this['COLLECTION_NAME'] + '.read_' +(collection ? 'collection' : 'one'));
+    return (this.COLLECTION_NAME + '.read_' +(collection ? 'collection' : 'one'));
   }
 
   /**
@@ -287,10 +271,10 @@ export class MeteorModel {
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
       console.log('Running #fetchCursor() in the backend with this query: ', query, options);
-      return this['COLLECTION'].find(query, options);
+      return this.COLLECTION.find(query, options);
     } else {
       console.log('Running #fetchCursor() in the frontend with this query: ', query);
-      return this['COLLECTION'].find(query, options);
+      return this.COLLECTION.find(query, options);
     }
   }
 
@@ -306,7 +290,7 @@ export class MeteorModel {
     } else {
       console.log('Running #fetchOne() in the frontend from this ID: ', id);
     }
-    let doc = this['COLLECTION'].findOne(id);
-    return (new this(doc));
+    let doc = this.COLLECTION.findOne(id);
+    return doc ? (new this(doc)) : undefined;
   }
 }
