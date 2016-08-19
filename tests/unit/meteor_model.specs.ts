@@ -2,13 +2,13 @@ import {MeteorModel} from "@gdn/meteor-model";
 import MeteorModelFixture from "./fixtures/meteor_model_fixture";
 import {assert} from 'meteor/practicalmeteor:chai';
 
-const meteorModelFixture = new MeteorModelFixture();
+const meteorModelFixture = new MeteorModelFixture({});
 let modelInstance;
 
 describe('MeteorModel', () => {
   describe(".constructor()", () => {
     it("should set initial attributes containing a null id attribute?", (done) => {
-      modelInstance = new MeteorModelFixture();
+      modelInstance = new MeteorModelFixture({});
 
       assert.isDefined(modelInstance.id);
       assert.equal(modelInstance.id, null);
@@ -16,7 +16,7 @@ describe('MeteorModel', () => {
     });
 
     it("should set the default attributes", () => {
-      modelInstance = new MeteorModelFixture();
+      modelInstance = new MeteorModelFixture({});
 
       assert.isDefined(modelInstance._attrs);
       assert.deepEqual(modelInstance._attrs, {
@@ -80,7 +80,7 @@ describe('MeteorModel', () => {
 
   describe('.isNew()', () => {
     it("should check wether the record is a new a record not persisted to the database", () => {
-      modelInstance = new MeteorModelFixture();
+      modelInstance = new MeteorModelFixture({});
       assert.equal(modelInstance.isNew(), true);
       modelInstance._attrs._id = 1001;
       assert.equal(modelInstance.isNew(), false);
@@ -89,14 +89,14 @@ describe('MeteorModel', () => {
 
   describe(".addValidationError()", () => {
     it("should add an error message to the errors object on an specific attribute name", () => {
-      modelInstance = new MeteorModelFixture();
+      modelInstance = new MeteorModelFixture({});
       assert.equal(modelInstance.addValidationError());
     });
   });
 
   describe(".validate()", () => {
     beforeEach(() => {
-      modelInstance = new MeteorModelFixture();
+      modelInstance = new MeteorModelFixture({});
     });
 
     it("should validate all the ValidationRules for every attribute and the global validators and build a list of errors", () => {
@@ -111,7 +111,7 @@ describe('MeteorModel', () => {
 
   describe(".isValid()", () => {
     it("should check if the model attributes are valid by looking into the _errors field", () => {
-      modelInstance = new MeteorModelFixture();
+      modelInstance = new MeteorModelFixture({});
       modelInstance._errors = {
         name:  ["Invalid message 1", "Super invalid"],
         items: ["Invalid message"]
@@ -124,7 +124,7 @@ describe('MeteorModel', () => {
 
   describe(".validateAttr()", () => {
     it("should validate a specific attribute using its ValidationRules and update the _errors field with the invalid messages", () => {
-      modelInstance = new MeteorModelFixture();
+      modelInstance = new MeteorModelFixture({});
       modelInstance._errors = {
         name: ["Invalid message 1", "Super invalid"],
         // Note that errors for "items" is not there
@@ -140,7 +140,7 @@ describe('MeteorModel', () => {
 
   describe(".isValidAttr()", () => {
     it("should check if a model attribute is valid by looking into the _errors field", () => {
-      modelInstance = new MeteorModelFixture();
+      modelInstance = new MeteorModelFixture({});
       modelInstance._errors = {
         name: ["Invalid message 1", "Super invalid"],
         items: ["Invalid message"]
@@ -200,11 +200,7 @@ describe('MeteorModel', () => {
         describe("with no id(new)", () => {
           it("should try to insert a new record in mongo", (done) => { 
             modelInstance = new MeteorModelFixture({ name: "My Original Name" });
-            MeteorModelFixture.COLLECTION = {
-              insert: () => done(),
-              update: () => {},
-              find: () => {}
-            }
+            MeteorModelFixture.COLLECTION.insert = () => done();
             modelInstance.save();
           });
         });
@@ -212,11 +208,7 @@ describe('MeteorModel', () => {
           it("should try to update an existing record in mongo", (done) => { 
             modelInstance = new MeteorModelFixture({ name: "My Original Name" });
             modelInstance._attrs._id = '123456789'
-            MeteorModelFixture.COLLECTION = {
-              insert: () => {},
-              update: () => done(),
-              find: () => {}
-            }
+            MeteorModelFixture.COLLECTION.update = () => done();
             modelInstance.save();
           });
         });
@@ -243,17 +235,14 @@ describe('MeteorModel', () => {
   });
 
   describe("#fetchCursor()", () => {
-    it("should return an instance of meteor model fixture", () => { 
-      MeteorModelFixture.COLLECTION = {
-        insert: () => {},
-        update: () => {},
-        find: (query, options) => {
-          return options.transform({email: 'test'})
-        }
-      }
+    it("should return an instance of meteorModelFixture", () => {
+      const email = 'test@test.nl'; 
+      MeteorModelFixture.COLLECTION.find = (query, options) => {
+          return options.transform({email: email})
+        };
       var result = MeteorModelFixture.fetchCursor();
-      console.log(result);
-      assert.equal(result.constructor.name, MeteorModelFixture.name)
+      assert.equal(result.constructor.name, MeteorModelFixture.name);
+      assert.equal(result.email, email);
     });
 
     xit("should return a promise", () => {
@@ -262,11 +251,26 @@ describe('MeteorModel', () => {
   });
 
   describe("#fetchOne()", () => {
-    xit("should return a Promise", () => {
+    describe("should return", () => {
+      const invalidId = '1';
+        const email = 'test@test.nl';
+      MeteorModelFixture.COLLECTION.findOne = (id) => {
+        if(id === invalidId)
+          return undefined;
+        return {email: email}
+      };
+      it("an instance of meteorModelFixture", () => {
+        var result = MeteorModelFixture.fetchOne('12345');
+        assert.equal(result.constructor.name, MeteorModelFixture.name);      
+        assert.equal(result.email, email);
+      });
 
+      it("undefined if object not found", () => {
+        var result = MeteorModelFixture.fetchOne(invalidId);
+        assert.isUndefined(result);
+      });
     });
-
-    xit("should resolve the Promise with an instance of the MeteorModel with the attribute values retrieved from Meteor", () => {
+    xit("should return a Promise", () => {
 
     });
   });

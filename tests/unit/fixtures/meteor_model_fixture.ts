@@ -4,7 +4,10 @@ import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./sampl
 /// <reference path="meteor-model.d.ts" />
 export default class MeteorModelFixture extends MeteorModel {
   public static COLLECTION_NAME = "collection";
-  public static COLLECTION = {update: () => {}, insert: () => {}, find: () => {}};
+  public static COLLECTION = {update: () => {}, 
+                              insert: () => {}, 
+                              find: (query, options) => {}, 
+                              findOne: (id) => {}};
 
   constructor(initialAttributes:Object) { super(initialAttributes); }
 
