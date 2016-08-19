@@ -172,28 +172,63 @@ describe('MeteorModel', () => {
   });
 
   describe(".save()", () => {
-    xit("should call the right Meteor method", () => {
-
-    });
-
-    xit("should return a Promise", () => {
-
-    });
+    if(Meteor.isClient) {
+      describe("on the client", () => {
+        function mockMeteor(done) {
+          Meteor.__call = Meteor.call;
+          Meteor.call = function(name) {
+            if (name === 'collection.save') {
+              done();
+              return "saved";
+            }
+            return Meteor.__call.apply(this, arguments);
+          }
+        }
+        it("should call the right Meteor method", (done) => {
+          mockMeteor(done);
+          modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+          modelInstance.save();
+        });
+        xit("should return a Promise", (done) => {
+          mockMeteor(() => {});
+          modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+          modelInstance.save().then(() => done());
+        });
+      });
+    } else {
+      describe("on the server", () => {
+        describe("with no id(new)", () => {
+          it("should try to insert a new record in mongo", (done) => { 
+            modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+            MeteorModelFixture.COLLECTION = {
+              insert: () => done(),
+              update: () => {},
+              find: () => {}
+            }
+            modelInstance.save();
+          });
+        });
+        describe("with an id(existing)", () => {
+          it("should try to update an existing record in mongo", (done) => { 
+            modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+            modelInstance._attrs._id = '123456789'
+            MeteorModelFixture.COLLECTION = {
+              insert: () => {},
+              update: () => done(),
+              find: () => {}
+            }
+            modelInstance.save();
+          });
+        });
+      });
+    }
   });
 
-  describe(".fetch()", () => {
-    xit("should return a Promise", () => {
-
-    });
-
-    xit("should fetch the attributes by calling the right Meteor method", () => {
-
-    });
-  });
-
-  describe('.subscribe()', () => {
-    xit("should subscribe for the Meteor resource publication", () => {
-
+  describe('.getPublicationName()', () => {
+    it("should return the name of a publication", () => {
+      var expectedName = 'collection.read_';
+      assert.equal(MeteorModelFixture.getPublicationName(true), expectedName + 'collection');
+      assert.equal(MeteorModelFixture.getPublicationName(false), expectedName + 'one');
     });
   });
 
@@ -208,11 +243,20 @@ describe('MeteorModel', () => {
   });
 
   describe("#fetchCursor()", () => {
-    xit("should return a Promise", () => {
-
+    it("should return an instance of meteor model fixture", () => { 
+      MeteorModelFixture.COLLECTION = {
+        insert: () => {},
+        update: () => {},
+        find: (query, options) => {
+          return options.transform({email: 'test'})
+        }
+      }
+      var result = MeteorModelFixture.fetchCursor();
+      console.log(result);
+      assert.equal(result.constructor.name, MeteorModelFixture.name)
     });
 
-    xit("should resolve the Promise with an array of instances of the ModelEntities with the attribute values retrieved from Meteor", () => {
+    xit("should return a promise", () => {
 
     });
   });

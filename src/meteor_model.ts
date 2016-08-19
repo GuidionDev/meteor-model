@@ -270,12 +270,11 @@ export class MeteorModel {
     // In the server it will call the real Mongo.
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
-      console.log('Running #fetchCursor() in the backend with this query: ', query, options);
-      return this.COLLECTION.find(query, options);
+      console.log('Running #fetchCursor() in the backend with this query: ', query);
     } else {
       console.log('Running #fetchCursor() in the frontend with this query: ', query);
-      return this.COLLECTION.find(query, options);
     }
+    return this.COLLECTION.find(query, options);
   }
 
   /**
