@@ -54,7 +54,7 @@ export interface IValidationRule {
   // conditions: Array<Function|any>;
   invalidMessage: String;
 
-  validate();
+  isValid(fromValue:any, toValue:any);
 }
 
 // ----[ Our validators ]------------------------------------------------------

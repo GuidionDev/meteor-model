@@ -6,11 +6,11 @@ import {ValidationRule} from './validation';
  */
 export class MeteorModel {
   private transport = "Meteor";
-  protected _attrs: Object
+  protected _attrs: any
   protected _prevAttrs: Object
   private _errors: Object
   private validationRules: Object
-  public static COLLECTION = {}
+  public static COLLECTION: any
   public static COLLECTION_NAME = 'default'
 
   constructor(initialAttributes:Object = {}) {
@@ -229,7 +229,7 @@ export class MeteorModel {
   /**
    * Destroys an entity
    */
-  public destroy() : Promise|MeteorModel {
+  public destroy() : Promise<string>|MeteorModel {
     this.beforeDestroy();
     if (Meteor.isServer) {
       console.log('Running .destroy() in the backend');
@@ -259,7 +259,7 @@ export class MeteorModel {
   /**
    * Retrieves a cursor to a collection of model instances
    */
-  public static fetchCursor(query: Object = {}, options: Object = {}) : Promise<Array<MeteorModel>>|Array<MeteorModel> {
+  public static fetchCursor(query: Object = {}, options: any = {}) : Promise<Array<MeteorModel>>|Array<MeteorModel> {
     let self = this;
     options.transform = (doc) => {
         return (new this(doc));
