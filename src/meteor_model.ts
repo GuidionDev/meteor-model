@@ -51,7 +51,7 @@ export class MeteorModel {
   private beforeValidation() {}
   private afterValidation() {}
 
-  // Callbacks to run before and after save the record
+  // Callbacks to run before and after saving the record
   private beforeSave() { }
   private afterSave() {}
 
@@ -72,7 +72,7 @@ export class MeteorModel {
   }
 
   /**
-   * Checks wether the MeteorModel instance is a new record
+   * Checks whether the MeteorModel instance is a new record
    */
   public isNew() {
     return (!this.id);
@@ -156,14 +156,14 @@ export class MeteorModel {
   }
 
   /**
-   * Checks weather an attribute value is valid
+   * Checks whether an attribute value is valid
    */
   public isValidAttr(attributeName:string) : boolean {
     return (this.getAttrErrors(attributeName).length === 0 ? true : false);
   }
 
   /**
-   * Checks wether the model has attributes changed since the last sync
+   * Checks whether the model has attributes changed since the last sync
    */
   public hasChanged():boolean {
     let attrName, prevAttrName,
@@ -184,7 +184,7 @@ export class MeteorModel {
   }
 
   /**
-   * Checks wether a model attribute has changed since the last sync
+   * Checks whether a model attribute has changed since the last sync
    */
   public hasAttrChanged(attrName:string):boolean {
     return (this._attrs[attrName] !== this._prevAttrs[attrName]);
@@ -219,7 +219,7 @@ export class MeteorModel {
   }
 
   /**
-   * Returns
+   * Returns attributes as a string
    */
   public toString() {
     let finalAttrs = this['_attrs']; finalAttrs['_id'] = this['_id'];
