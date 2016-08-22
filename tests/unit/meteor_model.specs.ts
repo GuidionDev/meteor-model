@@ -6,21 +6,12 @@ const meteorModelFixture = new MeteorModelFixture({});
 let modelInstance;
 
 describe('MeteorModel', () => {
-  describe(".constructor()", () => {
-    it("should set initial attributes containing a null id attribute?", (done) => {
-      modelInstance = new MeteorModelFixture({});
-
-      assert.isDefined(modelInstance.id);
-      assert.equal(modelInstance.id, null);
-      done();
-    });
-
+  describe(".constructor()", () => {    
     it("should set the default attributes", () => {
       modelInstance = new MeteorModelFixture({});
 
       assert.isDefined(modelInstance._attrs);
       assert.deepEqual(modelInstance._attrs, {
-        _id: null,
         username: 'username-1',
         email: 'david@guidion.com',
         items: [{
@@ -41,7 +32,6 @@ describe('MeteorModel', () => {
       });
 
       assert.deepEqual(modelInstance._attrs, {
-        _id: null,
         username: 'username-10001',
         email: 'david@guidion.com',
         items: [{
@@ -62,7 +52,6 @@ describe('MeteorModel', () => {
       });
 
       assert.deepEqual(modelInstance._prevAttrs, {
-        _id: null,
         username: 'username-10001',
         email: 'david@guidion.com',
         items: [{
