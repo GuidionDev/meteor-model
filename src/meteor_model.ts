@@ -19,9 +19,6 @@ export class MeteorModel {
     this._prevAttrs = {};
     this._errors = {};
 
-    // Set a null id
-    this['_attrs']['_id'] = this['_prevAttrs']['_id'] = null;
-
     // Extend with defaults first
     _.extend(this._attrs, this.defaults());
 
