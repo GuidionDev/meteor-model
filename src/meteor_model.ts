@@ -70,6 +70,24 @@ export class MeteorModel {
     //   'active' : true
     // }
   }
+  
+  protected addUniqueValueToArray(collectionName:string, attrValue:any) : boolean {
+    if (this._attrs[collectionName].indexOf(attrValue) < 0) {
+      this._attrs[collectionName].push(attrValue);
+      return true;
+      }
+    return false;
+  }
+
+  protected removeValueFromArray(collectionName:string, attrValue) : boolean {
+    let index = this._attrs[collectionName].indexOf(attrValue);
+    if ( index >= 0) {
+        this._attrs[collectionName].splice(index, 1);
+        return true;
+    }
+    return false;
+  }
+
 
   /**
    * Checks whether the MeteorModel instance is a new record
@@ -93,7 +111,7 @@ export class MeteorModel {
    * Validates the model according to its ValidationRules
    */
   public validate() {
-    console.log('validation the record!');
+    console.log('validating the document');
     this.beforeValidation();
 
     // Reset errors
@@ -104,7 +122,7 @@ export class MeteorModel {
 
     let matchAllValidations = true;
 
-    console.log('I have this validation rules: ', this.validationRules);
+    console.log('I have these validation rules: ', this.validationRules);
 
     // Validate every ValidationRule in every attribute
     for (let i = 0; i < attrNames.length; i++) {
