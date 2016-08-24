@@ -6,7 +6,7 @@ const meteorModelFixture = new MeteorModelFixture({});
 let modelInstance;
 
 describe('MeteorModel', () => {
-  describe(".constructor()", () => {    
+  describe(".constructor()", () => {
     it("should set the default attributes", () => {
       modelInstance = new MeteorModelFixture({});
 
@@ -161,18 +161,16 @@ describe('MeteorModel', () => {
   });
 
   describe(".save()", () => {
-    if(Meteor.isClient) {
+    let mockMeteor = (done) => {
+      Meteor.__call = Meteor.call;
+      Meteor.call = function(name) {
+        if (name === 'collection.save') { done(); return "saved"; }
+        return Meteor.__call.apply(this, arguments);
+      }
+    }
+
+    if (Meteor.isClient) {
       describe("on the client", () => {
-        function mockMeteor(done) {
-          Meteor.__call = Meteor.call;
-          Meteor.call = function(name) {
-            if (name === 'collection.save') {
-              done();
-              return "saved";
-            }
-            return Meteor.__call.apply(this, arguments);
-          }
-        }
         it("should call the right Meteor method", (done) => {
           mockMeteor(done);
           modelInstance = new MeteorModelFixture({ name: "My Original Name" });
@@ -187,14 +185,14 @@ describe('MeteorModel', () => {
     } else {
       describe("on the server", () => {
         describe("with no id(new)", () => {
-          it("should try to insert a new record in mongo", (done) => { 
+          it("should try to insert a new record in mongo", (done) => {
             modelInstance = new MeteorModelFixture({ name: "My Original Name" });
             MeteorModelFixture.COLLECTION.insert = () => done();
             modelInstance.save();
           });
         });
         describe("with an id(existing)", () => {
-          it("should try to update an existing record in mongo", (done) => { 
+          it("should try to update an existing record in mongo", (done) => {
             modelInstance = new MeteorModelFixture({ name: "My Original Name" });
             modelInstance._attrs._id = '123456789'
             MeteorModelFixture.COLLECTION.update = () => done();
@@ -205,7 +203,7 @@ describe('MeteorModel', () => {
     }
   });
 
-  describe('.getPublicationName()', () => {
+  describe('#getPublicationName()', () => {
     it("should return the name of a publication", () => {
       var expectedName = 'collection.read_';
       assert.equal(MeteorModelFixture.getPublicationName(true), expectedName + 'collection');
@@ -214,53 +212,80 @@ describe('MeteorModel', () => {
   });
 
   describe(".destroy()", () => {
-    xit("should return a Promise", () => {
+    let mockMeteor = (done) => {
+      Meteor.__call = Meteor.call;
+      Meteor.call = function(name) {
+        if (name === 'collection.remove') { done(); return "destroyed"; }
+        return Meteor.__call.apply(this, arguments);
+      }
+    }
+    if(Meteor.isClient) {
+      describe("on the client", () => {
+        it("should call the right Meteor method", (done) => {
+          mockMeteor(done);
+          modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+          let result = modelInstance.destroy();
+        });
 
-    });
+        xit("should return a Promise", (done) => {
+          modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+          modelInstance._attrs._id = '123456789';
+          MeteorModelFixture.COLLECTION.remove = () => done();
+          let result = modelInstance.destroy();
+          assert.equal(typeof(result), Promise);
+        });
+      });
+    } else {
+      describe("on the server", () => {
+        xit("should remove the record using the Mongo api", () => {
 
-    xit("should call the right Meteor method", () => {
-
-    });
+        });
+      });
+    }
   });
 
   describe("#fetchCursor()", () => {
-    it("should return an instance of meteorModelFixture", () => {
-      const email = 'test@test.nl'; 
+    let email, result;
+    beforeEach(() => {
+      email = 'test@test.nl';
       MeteorModelFixture.COLLECTION.find = (query, options) => {
-          return options.transform({email: email})
-        };
+        return options.transform({email: email})
+      };
+    });
+
+    it("should return an instance of the model entity", () => {
       var result = MeteorModelFixture.fetchCursor();
       assert.equal(result.constructor.name, MeteorModelFixture.name);
       assert.equal(result.email, email);
     });
-
-    xit("should return a promise", () => {
-
-    });
   });
 
   describe("#fetchOne()", () => {
-    describe("should return", () => {
-      const invalidId = '1';
-        const email = 'test@test.nl';
+    let invalidId, email;
+    beforeEach(() => {
+      invalidId = '1', email = 'test@test.nl';
+      // Mock findOne
       MeteorModelFixture.COLLECTION.findOne = (id) => {
-        if(id === invalidId)
+        if (id === invalidId) {
           return undefined;
+        }
         return {email: email}
       };
-      it("an instance of meteorModelFixture", () => {
+    });
+
+    describe("when the record exists in the Mongo collection", () => {
+      it("an instance of the model entity", () => {
         var result = MeteorModelFixture.fetchOne('12345');
-        assert.equal(result.constructor.name, MeteorModelFixture.name);      
+        assert.equal(result.constructor.name, MeteorModelFixture.name);
         assert.equal(result.email, email);
       });
+    });
 
-      it("undefined if object not found", () => {
+    describe("when the record doesn't exist in the Mongo collection", () => {
+      it("should return undefined", () => {
         var result = MeteorModelFixture.fetchOne(invalidId);
         assert.isUndefined(result);
       });
-    });
-    xit("should return a Promise", () => {
-
     });
   });
 });

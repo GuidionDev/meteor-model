@@ -1,12 +1,13 @@
+/// <reference path="../../../src/meteor_model.ts" />
+
 import {MeteorModel, ValidationRule} from "@gdn/meteor-model";
 import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./sample_validation_rule_fixture";
 
-/// <reference path="meteor-model.d.ts" />
 export default class MeteorModelFixture extends MeteorModel {
   public static COLLECTION_NAME = "collection";
-  public static COLLECTION = {update: () => {}, 
-                              insert: () => {}, 
-                              find: (query, options) => {}, 
+  public static COLLECTION = {update: () => {},
+                              insert: () => {},
+                              find: (query, options) => {},
                               findOne: (id) => {}};
 
   constructor(initialAttributes:Object) { super(initialAttributes); }
