@@ -32,12 +32,12 @@ export class MeteorModel {
     Object.assign(this._prevAttrs, this._attrs);
   }
 
-  get errors() { return this._errors; }
-  public getAttrErrors(attributeName:string) {
+  get errors() : Object { return this._errors; }
+  public getAttrErrors(attributeName:string) : Object {
     return (this._errors[attributeName] ? this._errors[attributeName] : []);
   }
 
-  get id(){
+  get id() : any {
     return this._attrs._id;
   }
 
@@ -63,8 +63,14 @@ export class MeteorModel {
   private beforeDestroy() { }
   private afterDestroy() { }
 
-  public defaults() {
-    // TODO: Implement it when extending
+  // NOTE: Implement it when extending
+  /**
+   * Sets the default values for the attributes when a new instance is created
+   */
+  public defaults() : Object {
+    return {};
+    // Sample:
+    //
     // return {
     //   'name' : 'Chuck Norris',
     //   'active' : true
@@ -74,37 +80,32 @@ export class MeteorModel {
   /**
    * Checks wether the MeteorModel instance is a new record
    */
-  public isNew() {
+  public isNew() : boolean {
     return (!this.id);
   }
 
   /**
    * Adds a validation error on a specific attribute
    */
-  private addValidationError(attributeName:string, errorMessage:string) {
+  private addValidationError(attributeName:string, errorMessage:string) : void {
     if (!this._errors[attributeName]) {
       this._errors[attributeName] = [];
     }
     this._errors[attributeName].push(errorMessage);
   }
 
-
   /**
    * Validates the model according to its ValidationRules
    */
-  public validate() {
-    console.log('validation the record!');
+  public validate() : boolean {
+    console.log(' + Validating record!');
     this.beforeValidation();
 
     // Reset errors
     this._errors = {};
 
-    let attrNames = Object.keys(this._attrs);
-    console.log('attribute names: ', attrNames);
-
-    let matchAllValidations = true;
-
-    console.log('I have this validation rules: ', this.validationRules);
+    let attrNames = Object.keys(this._attrs),
+        matchAllValidations = true;
 
     // Validate every ValidationRule in every attribute
     for (let i = 0; i < attrNames.length; i++) {
@@ -131,7 +132,7 @@ export class MeteorModel {
   /**
    * Checks if the model is a valid model according to its ValidationRules
    */
-  public isValid() {
+  public isValid() : boolean {
     let invalidAttrs = Object.keys(this['_errors']);
     return (invalidAttrs.length === 0 ? true : false);
   }
@@ -139,13 +140,14 @@ export class MeteorModel {
   /**
    * Validates a model attribute according to its ValidationRules
    */
-  public validateAttr(attributeName:string) {
-    let matchAllValidations = true;
+  public validateAttr(attributeName:string) : boolean {
+    let matchAllValidations = true,
+        validationRule;
     for (let i = 0; i < this.validationRules[attributeName].length; i++) {
-      let validationRule = this.validationRules[attributeName][i];
-      console.log('checking validation rule for attr: ', attributeName);
+      validationRule = this.validationRules[attributeName][i];
+
       // Check if entity is valid and collect all validation errors if any
-      if (!validationRule.isValid(/* TODO: pass previous value */ null, this._attrs[attributeName])) {
+      if (!validationRule.isValid(this._prevAttrs[attributeName], this._attrs[attributeName])) {
         // Add the validator message to the MeteorModel
         this.addValidationError(attributeName, validationRule._invalidMessage);
         matchAllValidations = false;
@@ -165,7 +167,7 @@ export class MeteorModel {
   /**
    * Checks wether the model has attributes changed since the last sync
    */
-  public hasChanged():boolean {
+  public hasChanged() : boolean {
     let attrName, prevAttrName,
         attrNames = Object.keys(this._attrs),
         prevAttrNames = Object.keys(this._prevAttrs);
@@ -186,26 +188,26 @@ export class MeteorModel {
   /**
    * Checks wether a model attribute has changed since the last sync
    */
-  public hasAttrChanged(attrName:string):boolean {
+  public hasAttrChanged(attrName:string) : boolean {
     return (this._attrs[attrName] !== this._prevAttrs[attrName]);
   }
 
   /**
    * Saves the model entity
    */
-  public save() : Promise<MeteorModel>|MeteorModel {
+  public save() : Mongo.Cursor<MeteorModel> | Promise<any> {
     this.beforeSave();
     if (Meteor.isServer) {
-      console.log('Running .save() in the backend', this._attrs);
+      console.log(' + Running .save() in the backend', this._attrs);
       if (this.isNew()) {
         return this.constructor['COLLECTION'].insert(this._attrs);
       } else {
         return this.constructor['COLLECTION'].update({_id: this.id}, this._attrs);
       }
     } else {
-      console.log('Running .save() in the frontend', this.constructor['COLLECTION_NAME']);
+      console.log(' + Running .save() in the frontend', this.constructor['COLLECTION_NAME']);
       return new Promise((resolve, reject) => {
-        Meteor.call(this.constructor['COLLECTION_NAME'] + '.save', this._attrs, (error, result) => {
+        Meteor.call(this.constructor['COLLECTION_NAME'] + '.save', this.toOriginJSON(), (error, result) => {
           if (error) {
             console.log(error);
             reject(Error(error));
@@ -219,25 +221,25 @@ export class MeteorModel {
   }
 
   /**
-   * Returns
+   * Returns the JSON expected by the Meteor endpoints.
+   * Override it in your extended classes when you need to process a different JSON structure
    */
-  public toString() {
-    let finalAttrs = this['_attrs']; finalAttrs['_id'] = this['_id'];
-    return finalAttrs;
+  public toOriginJSON() : Object {
+    return this['_attrs'];
   }
 
   /**
    * Destroys an entity
    */
-  public destroy() : Promise<string>|MeteorModel {
+  public destroy() : Mongo.Cursor<MeteorModel> | any {
     this.beforeDestroy();
     if (Meteor.isServer) {
-      console.log('Running .destroy() in the backend');
+      console.log(' + Running .destroy() in the backend');
       return this.constructor['COLLECTION'].remove({ _id: this.id });
     } else {
-      return new Promise((resolve, reject) => {
-        console.log('Running .destroy() in the frontend');
-        Meteor.call(this.constructor['COLLECTION_NAME'] + '.remove', this, (error, result) => {
+      let promise = new Promise((resolve, reject) => {
+        console.log(' + Running .destroy() in the frontend');
+        Meteor.call(this.constructor['COLLECTION_NAME'] + '.remove', this['_attrs']['_id'], (error, result) => {
           if (error) {
             reject(Error(error));
           } else {
@@ -246,6 +248,7 @@ export class MeteorModel {
           }
         });
       });
+      return promise;
     }
   }
 
@@ -259,7 +262,7 @@ export class MeteorModel {
   /**
    * Retrieves a cursor to a collection of model instances
    */
-  public static fetchCursor(query: Object = {}, options: any = {}) : Promise<Array<MeteorModel>>|Array<MeteorModel> {
+  public static fetchCursor(query: Object = {}, options: any = {}) : Mongo.Cursor<MeteorModel> {
     let self = this;
     options.transform = (doc) => {
         return (new this(doc));
@@ -267,9 +270,9 @@ export class MeteorModel {
     // In the server it will call the real Mongo.
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
-      console.log('Running #fetchCursor() in the backend with this query: ', query);
+      console.log(' + Running #fetchCursor() in the backend with this query: ', query);
     } else {
-      console.log('Running #fetchCursor() in the frontend with this query: ', query);
+      console.log(' + Running #fetchCursor() in the frontend with this query: ', query);
     }
     return this.COLLECTION.find(query, options);
   }
@@ -277,14 +280,14 @@ export class MeteorModel {
   /**
    * Retrieves a single MeteorModel instance
    */
-  public static fetchOne(id: string) : Promise<MeteorModel>|MeteorModel {
+  public static fetchOne(id: string) : MeteorModel | any {
     const self = this;
     // In the server it will call the real Mongo.
     // In the frontend it will call a fake Mongo object (Meteor)
     if (Meteor.isServer) {
-      console.log('Running #fetchOne() in the backend from this id: ', id);
+      console.log(' + Running #fetchOne() in the backend from this id: ', id);
     } else {
-      console.log('Running #fetchOne() in the frontend from this ID: ', id);
+      console.log(' + Running #fetchOne() in the frontend from this ID: ', id);
     }
     let doc = this.COLLECTION.findOne(id);
     return doc ? (new this(doc)) : undefined;
