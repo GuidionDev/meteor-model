@@ -51,7 +51,7 @@ export class MeteorModel {
   private beforeValidation() {}
   private afterValidation() {}
 
-  // Callbacks to run before and after save the record
+  // Callbacks to run before and after saving the record
   private beforeSave() { }
   private afterSave() {}
 
@@ -76,9 +76,27 @@ export class MeteorModel {
     //   'active' : true
     // }
   }
+  
+  protected addUniqueValueToArray(collectionName:string, attrValue:any) : boolean {
+    if (this._attrs[collectionName].indexOf(attrValue) < 0) {
+      this._attrs[collectionName].push(attrValue);
+      return true;
+      }
+    return false;
+  }
+
+  protected removeValueFromArray(collectionName:string, attrValue) : boolean {
+    let index = this._attrs[collectionName].indexOf(attrValue);
+    if ( index >= 0) {
+        this._attrs[collectionName].splice(index, 1);
+        return true;
+    }
+    return false;
+  }
+
 
   /**
-   * Checks wether the MeteorModel instance is a new record
+   * Checks whether the MeteorModel instance is a new record
    */
   public isNew() : boolean {
     return (!this.id);
@@ -98,7 +116,7 @@ export class MeteorModel {
    * Validates the model according to its ValidationRules
    */
   public validate() : boolean {
-    console.log(' + Validating record!');
+    console.log(' + validating the document');
     this.beforeValidation();
 
     // Reset errors
@@ -158,14 +176,14 @@ export class MeteorModel {
   }
 
   /**
-   * Checks weather an attribute value is valid
+   * Checks whether an attribute value is valid
    */
   public isValidAttr(attributeName:string) : boolean {
     return (this.getAttrErrors(attributeName).length === 0 ? true : false);
   }
 
   /**
-   * Checks wether the model has attributes changed since the last sync
+   * Checks whether the model has attributes changed since the last sync
    */
   public hasChanged() : boolean {
     let attrName, prevAttrName,
@@ -186,7 +204,7 @@ export class MeteorModel {
   }
 
   /**
-   * Checks wether a model attribute has changed since the last sync
+   * Checks whether a model attribute has changed since the last sync
    */
   public hasAttrChanged(attrName:string) : boolean {
     return (this._attrs[attrName] !== this._prevAttrs[attrName]);
