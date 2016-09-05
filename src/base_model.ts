@@ -30,7 +30,7 @@ export class BaseModel {
   }
 
   get errors() : Object { return this._errors; }
-  public getAttrErrors(attributeName:string) : Object {
+  public getAttrErrors(attributeName:string) : any[] {
     return (this._errors[attributeName] ? this._errors[attributeName] : []);
   }
 
