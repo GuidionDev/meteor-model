@@ -8,7 +8,8 @@ export default class MeteorModelFixture extends MeteorModel {
   public static COLLECTION = {update: () => {},
                               insert: () => {},
                               find: (query, options) => {},
-                              findOne: (id) => {}};
+                              findOne: (id) => {},
+                              remove: () => {}};
 
   constructor(initialAttributes:Object) { super(initialAttributes); }
 

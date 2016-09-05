@@ -1,6 +1,7 @@
 import {MeteorModel} from "@gdn/meteor-model";
 import MeteorModelFixture from "./fixtures/meteor_model_fixture";
-import {assert} from 'meteor/practicalmeteor:chai';
+import { chai, assert, expect } from 'meteor/practicalmeteor:chai';
+import { spies } from 'meteor/practicalmeteor:sinon';
 
 const meteorModelFixture = new MeteorModelFixture({});
 let modelInstance;
@@ -161,42 +162,44 @@ describe('MeteorModel', () => {
   });
 
   describe(".save()", () => {
-    let mockMeteor = (done) => {
-      Meteor.__call = Meteor.call;
-      Meteor.call = function(name) {
-        if (name === 'collection.save') { done(); return "saved"; }
-        return Meteor.__call.apply(this, arguments);
-      }
-    }
-
     if (Meteor.isClient) {
+      let mockMeteor = (done) => {
+        Meteor.__call = Meteor.call;
+        Meteor.call = function(name) {
+          if (name === 'collection.save') { done(); return "saved"; }
+          return Meteor.__call.apply(this, arguments);
+        }
+      }
+
       describe("on the client", () => {
         it("should call the right Meteor method", (done) => {
           mockMeteor(done);
           modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+          spies.create('collectionSaveSpy', Meteor, 'call');
           modelInstance.save();
-        });
-        xit("should return a Promise", (done) => {
-          mockMeteor(() => {});
-          modelInstance = new MeteorModelFixture({ name: "My Original Name" });
-          modelInstance.save().then(() => done());
+          expect(spies.collectionSaveSpy).to.have.been.calledWith('collection.save');
+          spies.restoreAll();
         });
       });
     } else {
       describe("on the server", () => {
         describe("with no id(new)", () => {
-          it("should try to insert a new record in mongo", (done) => {
+          it("should try to insert a new record in mongo", () => {
             modelInstance = new MeteorModelFixture({ name: "My Original Name" });
-            MeteorModelFixture.COLLECTION.insert = () => done();
+            spies.create('insertMongoMethodSpy', modelInstance.constructor["COLLECTION"], 'insert');
             modelInstance.save();
+            expect(spies.insertMongoMethodSpy).to.have.been.calledWith(modelInstance._attrs);
+            spies.restoreAll();
           });
         });
         describe("with an id(existing)", () => {
-          it("should try to update an existing record in mongo", (done) => {
+          it("should try to update an existing record in mongo", () => {
             modelInstance = new MeteorModelFixture({ name: "My Original Name" });
-            modelInstance._attrs._id = '123456789'
-            MeteorModelFixture.COLLECTION.update = () => done();
+            modelInstance._attrs._id = '123456789';
+            spies.create('updateMongoMethodSpy', modelInstance.constructor["COLLECTION"], 'update');
             modelInstance.save();
+            expect(spies.updateMongoMethodSpy).to.have.been.calledWith({ _id: '123456789' }, modelInstance._attrs);
+            spies.restoreAll();
           });
         });
       });
@@ -212,33 +215,34 @@ describe('MeteorModel', () => {
   });
 
   describe(".destroy()", () => {
-    let mockMeteor = (done) => {
-      Meteor.__call = Meteor.call;
-      Meteor.call = function(name) {
-        if (name === 'collection.remove') { done(); return "destroyed"; }
-        return Meteor.__call.apply(this, arguments);
-      }
-    }
     if(Meteor.isClient) {
       describe("on the client", () => {
+        let mockMeteor = (done) => {
+          Meteor.__call = Meteor.call;
+          Meteor.call = function(name) {
+            if (name === 'collection.remove') { done(); return "destroyed"; }
+            return Meteor.__call.apply(this, arguments);
+          }
+        }
+
         it("should call the right Meteor method", (done) => {
           mockMeteor(done);
           modelInstance = new MeteorModelFixture({ name: "My Original Name" });
-          let result = modelInstance.destroy();
-        });
-
-        xit("should return a Promise", (done) => {
-          modelInstance = new MeteorModelFixture({ name: "My Original Name" });
-          modelInstance._attrs._id = '123456789';
-          MeteorModelFixture.COLLECTION.remove = () => done();
-          let result = modelInstance.destroy();
-          assert.equal(typeof(result), Promise);
+          spies.create('collectionDestroySpy', Meteor, 'call');
+          modelInstance.destroy();
+          expect(spies.collectionDestroySpy).to.have.been.calledWith('collection.remove');
+          spies.restoreAll();
         });
       });
     } else {
       describe("on the server", () => {
-        xit("should remove the record using the Mongo api", () => {
-
+        it("should remove the record using the Mongo api", () => {
+          modelInstance = new MeteorModelFixture({ name: "My Original Name" });
+          modelInstance['_attrs']['_id'] = 1001;
+          let removeMongoMethodSpy = spies.create('removeMongoMethodSpy', modelInstance.constructor["COLLECTION"], 'remove');
+          modelInstance.destroy();
+          expect(spies.removeMongoMethodSpy).to.have.been.calledWith({ _id: 1001 });
+          spies.restoreAll();
         });
       });
     }

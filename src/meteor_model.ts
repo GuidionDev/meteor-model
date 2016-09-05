@@ -89,7 +89,7 @@ export class MeteorModel extends BaseModel {
     } else {
       let promise = new Promise((resolve, reject) => {
         console.log(' + Running .destroy() in the frontend');
-        Meteor.call(this.constructor['COLLECTION_NAME'] + '.remove', this['_attrs']['_id'], (error, result) => {
+        Meteor.call(this.constructor['COLLECTION_NAME'] + '.remove', this.id, (error, result) => {
           if (error) {
             reject(Error(error));
           } else {
