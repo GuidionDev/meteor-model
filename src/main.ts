@@ -1,4 +1,5 @@
 export * from './meteor_model';
+export * from './base_model';
 export * from './validation';
 export * from './validators/allowed_value_switch_validator';
 export * from './validators/email_validator';
