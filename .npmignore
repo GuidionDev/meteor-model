@@ -1,1 +1,6 @@
 *.yml
+src
+tests
+.gitignore
+typings
+tsconfig.json
