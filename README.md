@@ -1,4 +1,4 @@
-![travis build](https://img.shields.io/travis/GuidionDev/meteor-model.svg)
+![travis build](https://travis-ci.com/GuidionDev/meteor-model.svg?token=bMu85Urom9SKygWhZ7dr&branch=master)
 
 ## meteor-model
 
