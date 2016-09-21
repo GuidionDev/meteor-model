@@ -1,3 +1,5 @@
+![travis build](https://img.shields.io/travis/GuidionDev/meteor-model.svg)
+
 ## meteor-model
 
 Implements a basic functionality to build Meteor models that hold business logic, validation and data persistance.
