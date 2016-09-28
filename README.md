@@ -1,3 +1,5 @@
+![travis build](https://travis-ci.com/GuidionDev/meteor-model.svg?token=bMu85Urom9SKygWhZ7dr&branch=master)
+
 ## meteor-model
 
 Implements a basic functionality to build Meteor models that hold business logic, validation and data persistance.
