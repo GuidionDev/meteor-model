@@ -206,14 +206,6 @@ describe('MeteorModel', () => {
     }
   });
 
-  describe('#getPublicationName()', () => {
-    it("should return the name of a publication", () => {
-      var expectedName = 'collection.read_';
-      assert.equal(MeteorModelFixture.getPublicationName(true), expectedName + 'collection');
-      assert.equal(MeteorModelFixture.getPublicationName(false), expectedName + 'one');
-    });
-  });
-
   describe(".destroy()", () => {
     if(Meteor.isClient) {
       describe("on the client", () => {
@@ -258,7 +250,7 @@ describe('MeteorModel', () => {
     });
 
     it("should return an instance of the model entity", () => {
-      var result = MeteorModelFixture.fetchCursor();
+      var result = MeteorModelFixture.findCursor();
       assert.equal(result.constructor.name, MeteorModelFixture.name);
       assert.equal(result.email, email);
     });
