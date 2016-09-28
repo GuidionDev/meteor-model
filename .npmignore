@@ -4,3 +4,4 @@ tests
 .gitignore
 typings
 tsconfig.json
+docs

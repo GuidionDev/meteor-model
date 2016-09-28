@@ -103,16 +103,9 @@ export class MeteorModel extends BaseModel {
   }
 
   /**
-   * Subscribes for the resource collection using a specific query
-   */
-  public static getPublicationName(collection:boolean) : string {
-    return (this.COLLECTION_NAME + '.read_' +(collection ? 'collection' : 'one'));
-  }
-
-  /**
    * Retrieves a cursor to a collection of model instances
    */
-  public static fetchCursor(query: Object = {}, options: any = {}) : Mongo.Cursor<MeteorModel> {
+  public static findCursor(query: Object = {}, options: any = {}) : Mongo.Cursor<MeteorModel> {
     let self = this;
     options.transform = (doc) => {
         return (new this(doc));
