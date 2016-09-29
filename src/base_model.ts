@@ -86,6 +86,9 @@ export class BaseModel {
     console.log(' + validating the document');
     this.beforeValidation();
 
+    if(!this.validationRules){
+      throw new Error("No validation rules defined!");
+    }
     // Reset errors
     this._errors = {};
 
