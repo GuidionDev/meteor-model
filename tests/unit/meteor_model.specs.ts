@@ -94,7 +94,7 @@ describe('MeteorModel', () => {
       assert.deepEqual(modelInstance._errors, {
         username:  ["Invalid message"],
         items: ["Invalid message"],
-        '_base': ["It's not valid"]
+        '_base': ["Invalid field"]
       });
     });
   });

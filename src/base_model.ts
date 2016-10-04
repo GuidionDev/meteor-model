@@ -9,6 +9,7 @@ export class BaseModel {
   protected _prevAttrs: Object
   private _errors: Object
   private validationRules: Object
+  private globalValidation = '_base';
 
   constructor(initialAttributes:Object = {}) {
 
@@ -103,14 +104,10 @@ export class BaseModel {
         }
       }
     }
-
     // Validate all custom ValidationRules
-    if (this.validationRules['_base'] && this.validationRules['_base'].length > 0) {
-      for (let i = 0; i < this.validationRules['_base'].length; i++) {
-        if (!this.validationRules['_base'][i]()) {
-          matchAllValidations = false;
-        }
-      }
+    var matchGlobal = this.validateGlobal();
+    if(!matchGlobal) {
+      matchAllValidations = false;
     }
 
     this.afterValidation();
@@ -125,6 +122,26 @@ export class BaseModel {
     return (invalidAttrs.length === 0 ? true : false);
   }
 
+  public validateGlobal() : boolean {
+    const globalRules = this.validationRules[this.globalValidation];
+    let matchAllValidations = true, 
+        validationRule;
+    // Validate all custom ValidationRules
+    if (globalRules && globalRules.length > 0) {
+      for (let i = 0; i < globalRules.length; i++) {
+        validationRule = globalRules[i];
+
+        // Check if entity is valid and collect all validation errors if any
+        if (!validationRule.isValid(this._prevAttrs, this._attrs)) {
+          // Add the validator message to the MeteorModel
+          this.addValidationError(this.globalValidation, validationRule.invalidMessage);
+          matchAllValidations = false;
+        }
+      }
+    }
+    return matchAllValidations;
+  }
+
   /**
    * Validates a model attribute according to its ValidationRules
    */
@@ -137,7 +154,7 @@ export class BaseModel {
       // Check if entity is valid and collect all validation errors if any
       if (!validationRule.isValid(this._prevAttrs[attributeName], this._attrs[attributeName])) {
         // Add the validator message to the MeteorModel
-        this.addValidationError(attributeName, validationRule._invalidMessage);
+        this.addValidationError(attributeName, validationRule.invalidMessage);
         matchAllValidations = false;
       }
     }

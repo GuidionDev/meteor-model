@@ -1,7 +1,9 @@
 import { assert } from 'meteor/practicalmeteor:chai';
 import {ValidationRule, LengthValidator, RegExpValidator,
-   EmailValidator, RequiredValidator, AllowedValueSwitchValidator} from "@gdn/meteor-model";
+   EmailValidator, RequiredValidator, AllowedValueSwitchValidator, 
+   DataTypeValidator} from "@gdn/meteor-model";
 import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./fixtures/sample_validation_rule_fixture";
+
 
 describe("ValidationRule", () => {
   let validationRule;
@@ -172,10 +174,37 @@ describe("AllowedValueSwitchValidator", () => {
   });
 
   describe("when the value has made an invalid switch", () => {
-    it("should be valid", () => {
+    it("should not be valid", () => {
       assert.equal(allowedValueSwitchValidator.isValid(null, "scheduled"), false);
       assert.equal(allowedValueSwitchValidator.isValid("scheduled", "open"), false);
       assert.equal(allowedValueSwitchValidator.isValid("open", "invalid status"), false);
+    });
+  });
+});
+
+
+describe("DataTypeValidator", () => {
+  class Person{};
+    
+  let dataTypeValidator = new DataTypeValidator({ _id: String, name: String, count: Number, person: {plop: String}});
+  describe("with non-existing fields", () => {
+    it("should be invalid", () => {
+      assert.equal(dataTypeValidator.isValid({}, {iDontExist: 'harmfullData'}), false);
+    });
+  });
+
+  describe("with existing fields", () => {    
+    it("but wrong types, should be invalid", () => {
+      assert.equal(dataTypeValidator.isValid({}, {_id: 5}), false);
+    });
+    it("but wrong object instances, should be invalid", () => {
+      assert.equal(dataTypeValidator.isValid({}, {person: {plop: 67}}), false);
+    });
+    it("and correct types, should be valid", () => {
+      var person = new Person('plop');
+      var result = dataTypeValidator.isValid({}, {_id: '123455', name: 'plop', count: 75, person: {plop: 'plop'}});
+      var message = dataTypeValidator._invalidMessage;
+      assert.equal(result, true);
     });
   });
 });

@@ -8,7 +8,7 @@ export class ValidationRule implements IValidationRule {
   public params:Object
   private _invalidMessage = "Invalid";
 
-  constructor(params?:any) {
+  constructor(params?:any) {    
     this.params = params;
     this._invalidMessage = "";
   }
@@ -24,6 +24,7 @@ export class ValidationRule implements IValidationRule {
    * Checks if the ValidationRule is valid
    */
   public isValid(fromValue:any, toValue:any): Boolean {
+          console.log('blaat', this.toValue);
     this.fromValue = fromValue;
     this.toValue = toValue;
 

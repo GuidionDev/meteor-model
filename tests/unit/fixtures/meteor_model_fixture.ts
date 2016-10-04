@@ -1,7 +1,8 @@
 /// <reference path="../../../src/meteor_model.ts" />
 
 import {MeteorModel, ValidationRule} from "@gdn/meteor-model";
-import {SampleValidationRuleFixture, SampleValidationRuleFixture2} from "./sample_validation_rule_fixture";
+import {SampleValidationRuleFixture, SampleValidationRuleFixture2, 
+  SampleGlobalValidationRuleFixture} from "./sample_validation_rule_fixture";
 
 export default class MeteorModelFixture extends MeteorModel {
   public static COLLECTION_NAME = "collection";
@@ -35,8 +36,7 @@ export default class MeteorModelFixture extends MeteorModel {
 
   private validationRules = {
     '_base':    [
-      () => { return true; },
-      () => { this.addValidationError('_base', "It's not valid"); return false; }
+      new SampleGlobalValidationRuleFixture()
     ],
     'username': [new SampleValidationRuleFixture(), new SampleValidationRuleFixture2()],
     'email':    [new SampleValidationRuleFixture()],

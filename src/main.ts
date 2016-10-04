@@ -6,3 +6,4 @@ export * from './validators/email_validator';
 export * from './validators/length_validator';
 export * from './validators/reg_exp_validator';
 export * from './validators/required_validator';
+export * from './validators/data_type_validator';
