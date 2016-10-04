@@ -24,7 +24,6 @@ export class ValidationRule implements IValidationRule {
    * Checks if the ValidationRule is valid
    */
   public isValid(fromValue:any, toValue:any): Boolean {
-          console.log('blaat', this.toValue);
     this.fromValue = fromValue;
     this.toValue = toValue;
 
