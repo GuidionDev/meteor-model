@@ -201,7 +201,6 @@ describe("DataTypeValidator", () => {
       assert.equal(dataTypeValidator.isValid({}, {person: {plop: 67}}), false);
     });
     it("and correct types, should be valid", () => {
-      var person = new Person('plop');
       var result = dataTypeValidator.isValid({}, {_id: '123455', name: 'plop', count: 75, person: {plop: 'plop'}});
       var message = dataTypeValidator._invalidMessage;
       assert.equal(result, true);
