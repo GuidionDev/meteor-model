@@ -7,7 +7,7 @@
     "build": "tsc || echo not ok && npm link && cd tests && npm link @gdn/meteor-model",
     "test": "npm run build && cd tests && meteor test --driver-package=practicalmeteor:mocha",
     "citest": "npm run build && cd tests && meteor test --once --driver-package dispatch:mocha-phantomjs",
-    "semantic-release": "semantic-release pre && npm publish && semantic-release post"
+    "semantic-release": "semantic-release pre && npm publish --access=public && semantic-release post"
   },
   "author": "Guidion B.V.",
   "license": "UNLICENSED",
