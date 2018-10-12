@@ -1,6 +1,6 @@
 import {ValidationRule} from '../validation'
 
-export class RegExpValidator extends ValidationRule {
+export class RegExpValidator extends ValidationRule<any> {
   protected conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
