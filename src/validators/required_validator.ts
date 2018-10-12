@@ -1,6 +1,6 @@
 import {ValidationRule} from '../validation'
 
-export class RequiredValidator extends ValidationRule {
+export class RequiredValidator extends ValidationRule<any> {
   protected conditions:Array<Function> = [
     () => {
       let match:Boolean = true;
