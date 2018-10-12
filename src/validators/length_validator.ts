@@ -2,7 +2,7 @@ import {ValidationRule} from '../validation'
 
 interface LengthValidatorParams { min: number, max: number }
 
-export class LengthValidator extends ValidationRule {
+export class LengthValidator extends ValidationRule<LengthValidatorParams> {
   protected conditions:Array<Function> = [
     () => {
       let match:Boolean = true;

@@ -1,6 +1,6 @@
 import {ValidationRule} from '../validation'
 import {RegExpValidator} from './reg_exp_validator'
-export class EmailValidator extends ValidationRule {
+export class EmailValidator extends ValidationRule<any> {
   protected conditions:Array<Function> = [
     // Check for email regexp...
     () => {

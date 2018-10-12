@@ -4,7 +4,7 @@ import * as Match from 'mtr-match'
 
 interface DataTypeValidatorParams { type: string }
 
-export class DataTypeValidator extends ValidationRule {
+export class DataTypeValidator extends ValidationRule<DataTypeValidatorParams> {
   constructor(params){
     super(params);
     this.params = params;

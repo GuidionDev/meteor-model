@@ -1,6 +1,6 @@
 import {ValidationRule} from '../validation'
 
-export class AllowedValueSwitchValidator extends ValidationRule {
+export class AllowedValueSwitchValidator extends ValidationRule<any> {
     // Sample of value changes declaration:
     // { matches: [
     //     { from: "open", to: ["scheduled", "canceled", "closed"] }
