@@ -1,14 +1,14 @@
 /**
  * Represents a validation rule
  */
-export class ValidationRule implements IValidationRule {
+export class ValidationRule<T extends any> implements IValidationRule {
   protected conditions: Array<Function> = [];
   public fromValue:any;
   public toValue:any
   public params:Object
   private _invalidMessage = "Invalid";
 
-  constructor(params?:any) {    
+  constructor(params?:T) {    
     this.params = params;
     this._invalidMessage = "";
   }
